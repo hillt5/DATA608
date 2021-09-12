@@ -1,5 +1,6 @@
 ---
-title: "R Notebook"
+title: "Module 1 for DATA 608"
+author: "Thomas Hill"
 output:
   html_document: default
   html_notebook: default
@@ -8,6 +9,14 @@ output:
 **Principles of Data Visualization and Introduction to ggplot2**
 
 I have provided you with data about the 5,000 fastest growing companies in the US, as compiled by Inc. magazine. lets read this in:
+
+
+```{r, libraries, message = FALSE}
+
+library(dplyr)
+library(ggplot2)
+library(forcats)
+```
 
 ```{r}
 
@@ -22,6 +31,9 @@ And lets preview this data:
 head(inc)
 
 ```
+
+__Looking at the top companies by growth, it apears that the top 5000 companies come from inc.com's 2013 list.__  
+
 ```{r}
 
 summary(inc)
@@ -30,55 +42,195 @@ summary(inc)
 
 Think a bit on what these summaries mean. Use the space below to add some more relevant non-visual exploratory information you think helps you understand this data:
 
-```{r}
 
-library(dplyr)
+__The dataset provides eight variables to consider to describe the patterns of growth.  Feature 'Name' is an important label for each firm, while 'Industry' may be used to draw useful comparisons. 'City' and 'State' variables offer the possibilty of identifying geographical trends or high growth clusters. 'Rank' and 'Growth_Rate' both describe the same underlying data - the rank given provides a rank of the highest growth companies. Growth rate is in terms of percent, i.e., the top company Fuhu grew 42,148% in 2013 or grew over 400 times its original size.  'Revenue' and 'Employees' provide a measure of each company's size and income.__  
 
-colSums(is.na(inc))
-inc[is.na(inc$Employees),]
+__There are two features I'm most interested in adding. The first is simply revenue divided by employee as a rough estimate of company and sector productivity. Next, I'll consider what I'm calling 'revenue change', or the absolute year-on-year growth for a company. This will allow for direct comparisons of change in revenue irrespective of the company's size, and will consider the growth rate paired with the revenue.  My reasoning behind this is because many of the growth rates are exaggerated owing ot the small size of the company. Consistent but mediocre growth in a firm with high capitalization could still be more lucrative in the long run than speculating on smaller, private companies. Revenue growth will be useful in steering away from untested firms.__  
 
-inc <- inc %>% 
-  mutate(revenue_mil = Revenue/10e5) %>%
-  mutate(industry_fct = as.factor(Industry)) %>%
-  mutate(state_fct = as.factor(State)) %>%
-  mutate(city_fct = as.factor(City)) %>%
-  mutate(revenue_change = round(Revenue*(1-(1+Growth_Rate/100)^-1)/10e5,2)) # absolute dollar change in revenue over the past year, in millions 
-# Insert your code here, create more chunks as necessary
+__These variables can be further explored by grouping companies by industry. This will allow identification of fastest growing industries and provide useful rankings  Additionally, I'll consider missing values for employees to see if this is significant. Finally, revenue and change in revenue can be expressed in milliions of dollars (MM) for readability reasons.__  
 
-summary(inc)
 
-inc[inc$Rank == 1,]
+
+```{r, refactor}
+
+inc$Revenue <- (inc$Revenue)/10e5 #change to millions of dollars
+inc$City <- toupper(inc$City) #keep city names a consistent case
+inc$Industry <- as.factor(inc$Industry) #change to factor
+inc$State <- as.factor(inc$State)#change to factor
+inc$City <- as.factor(inc$City) #change to factor
+
 
 ```
+
+
+
+```{r, add-columns}
+
+inc <- inc %>%
+  mutate(revenue_change = round(Revenue*(1-(1+Growth_Rate)^-1),2)) %>% # absolute dollar change in revenue over the past year, in millions 
+  mutate(revenue_employee = round((Revenue/Employees)*10e2,2)) %>% #dollars revenue per employee, thousands
+  mutate(revenue_change_employee = round(10e2*Revenue*(1-(1+Growth_Rate)^-1)/Employees,2)) #change in revenue per employee, thousands
+
+
+```
+
+
+
+```{r, summary}
+summary(inc)
+
+nlevels(inc$Industry)
+nlevels(inc$City)
+nlevels(inc$State)
+
+
+```
+
+__Recoding several variables as features offers a little more insight into which companies are growing. The industry with the  most representation in the top 5000 is Information Technology, encompassing almost 15% of the firms. There are 25 different industries represented on the list. Likewise, 14% of the companies are located in one state: California. Beyond this, there is at least one fast-growing company in each state, including Washingotn DC and Puerto Rico.__
+
+__For my engineered features, revenue_change appears to be skewed to the right, with mean 50% high than median.  Considering revenue and its change relative to number of employees provides more question than answers, as there appear to be some companies generating massive revenue with few employees.__  
+
+
+```{r, missing-values}
+
+inc[is.na(inc$Employees),]
+
+```
+
+
+```{r, smallest-companies}
+
+summary(inc[inc$Employees < 24,])
+```
+
+__For missing values, no immediate patterns can be identified. Looking at the smallest 25% of companies, these companies appear to have lower revenue but conversely much higher revenue per employee. Absolute change in revenue is also lower than the top 5000 but higher on a per-emplmoyee basis. The bottom 25% also may represent more retail and fewer health-related companies.__
 
 ## Question 1
 
 Create a graph that shows the distribution of companies in the dataset by State (ie how many are in each state). There are a lot of States, so consider which axis you should use. This visualization is ultimately going to be consumed on a 'portrait' oriented screen (ie taller than wide), which should further guide your layout choices.
 
-```{r}
+```{r, n-companies-state-region}
 
-# Answer Question 1 here
+companies_by_state <- inc %>%
+  group_by(State) %>% 
+  summarize(n_companies = n()) %>% #get number of companies per state
+  arrange(desc(n_companies)) %>%
+  mutate(State = fct_reorder(State,n_companies)) %>% #rearrange by state in descending order
+  mutate(Region = recode_factor(State, VA = 'South', WV = 'South', AR = 'South', DE = 'South', DC = 'South', FL = 'South', GA = 'South', MD = 'South', NC = 'South', SC = 'South', AL = 'South', KY = 'South', MS = 'South', TN = 'South', AK = 'South', LA = 'South', OK = 'South' , TX = 'South', PR = 'South', #south
+AZ = 'West', CO = 'West', ID = 'West', NM = 'West', MT = 'West', UT = 'West', NV = 'West', WY = 'West', AK = 'West', CA = 'West', HI = 'West', OR = 'West', WA = 'West',
+IA = 'Midwest', IL = 'Midwest', MI = 'Midwest', OH = 'Midwest', WI = 'Midwest', IA = 'Midwest', KS = 'Midwest', MN = 'Midwest', MS = 'Midwest', NE = 'Midwest', SD = 'Midwest', ND = 'Midwest', IN = 'Midwest', MO = 'Midwest',#midwest
+CT = 'Northeast', ME = 'Northeast', MA = 'Northeast', NH = 'Northeast', RI = 'Northeast', VT = 'Northeast', NJ = 'Northeast', NY = 'Northeast', PA = 'Northeast' #northeast
+)) %>%
+  mutate(top_states = recode_factor(State, CA= 'CA', TX = 'TX' , NY = 'NY', VA = 'VA', FL = 'FL' , IL = 'IL', GA = 'GA', OH = 'OH', .default = "Other")) %>%
+  mutate(top_states = fct_reorder(top_states, n_companies))#rearrange by state in descending order
+
 
 ```
+
+
+
+```{r, graphs-by-state}
+
+
+ggplot(companies_by_state[companies_by_state$top_states != 'Other',], aes(top_states,n_companies)) + #omit states listed as 'other'
+  geom_bar(stat = 'identity') +
+  coord_flip() #change axis
+
+
+ggplot(companies_by_state, aes(fill = top_states, Region,n_companies)) + #all data included
+  geom_bar(stat = 'identity', color = 'grey') + #use grey to distinguish between states within the 'other' column
+  scale_fill_brewer(palette='PuRd') +
+  coord_flip()  + #change axis
+  scale_x_discrete(limits = rev) #largest regions on top, largest states closest to y-axis
+
+
+
+
+```
+
+__To visualize companies by state in the most concise way possible, I provided two bar graphs. The first graph provides the top 8 states in terms of number of high-growht companies. This graph, complete with a coord flip to show bar graphs horizontally, only provides ~50% of the top 5,000 companies. This a large loss of information and context.__  
+
+__To compensate for this, the second graph also utilizes color as a third element of data to distinguish the top 8 states. These states are part of four larger regions of the United States, as defined by the Census Bureau: Northeast, South, Midwest, and West. While these regions are very diverse, this provides a way of comparing states with their geographical counterparts. To interpret the second graph, the largest comntributors are the most saturated, while the 'Other' column is white in each region.  This allows for comparisons between geographical regions, as well as showing the relative contribution of a state to its region. For example, California makes up over half of the West's fastest growing companies. This second graph also illustrates an important takeaway that's not immediately obvious from the top cities and states: the South is not only the largest contributor to fastest growing compnaies, but also contains four of the top eight. I also added grey borders in each state to add an intuition about how many states are in each region - the South for instance has many states but only some of them contribute appreciably to the largest growth companies tally.__
 
 ## Quesiton 2
 
 Lets dig in on the state with the 3rd most companies in the data set. Imagine you work for the state and are interested in how many people are employed by companies in different industries. Create a plot that shows the average and/or median employment by industry for companies in this state (only use cases with full data, use R's `complete.cases()` function.) In addition to this, your graph should show how variable the ranges are, and you should deal with outliers.
 
-```{r}
+```{r, top-three-states }
+
+companies_by_state %>%
+  arrange(desc(n_companies)) %>%
+  head(3)
 
 # Answer Question 2 here
 
 ```
 
+__The state with the third largest companies is New York.__
+
+
+```{r, NY-state-employees}
+
+ny_inc <- inc[complete.cases(inc),] %>%
+  filter(State == 'NY')
+
+ny_industry <- ny_inc %>%
+  group_by(Industry) %>%
+  mutate(iqr = 1.5*(quantile(Employees,.75) - quantile(Employees,.25))) %>% #define each other's IQR
+  ungroup() %>% #ungroup to filter outliers
+  filter((Employees < mean(Employees) + 1.5*iqr) & (Employees > mean(Employees) - 1.5*iqr))%>% #filter outliers
+  mutate(mean_employee = mean(Employees)) %>%
+  mutate(sqr_resid = (Employees - mean_employee)^2)  %>% #get squared residuals for standard deviation while ungrouped
+  group_by(Industry) %>% #regroup to generate industry statistics
+  summarize(n_company = n(), n_employee = sum(Employees), avg_employee = mean(Employees), med_employee = median(Employees), sd_employee = sqrt(sum(sqr_resid)/sum(Employees)))  %>% #summarize industry statistics
+  arrange(desc(avg_employee)) %>% 
+  mutate(Industry = fct_reorder(Industry, avg_employee)) #arrange so that largest average industry is on top
+
+
+
+ggplot(ny_industry, aes(fill=n_employee, Industry, avg_employee)) + #this graph will show each industry versus average employees, colored by total employees in the industry in NY state
+  geom_bar(aes(Industry, avg_employee), stat = 'identity') + #bar length defined by average employee in industry
+  geom_errorbar(aes(x = Industry, ymin=avg_employee-sd_employee, ymax = avg_employee+sd_employee)) + #error bars +/- standard deviation
+  coord_flip() #show industry on y-axis
+```
 ## Question 3
 
 Now imagine you work for an investor and want to see which industries generate the most revenue per employee. Create a chart that makes this information clear. Once again, the distribution per industry should be shown.
 
-```{r}
+```{r, ny-state-revenue}
 
-# Answer Question 3 here
+
+ny_revenue <- ny_inc %>%
+  group_by(Industry) %>%
+  mutate(iqr = 1.5*(quantile(revenue_employee,.75) - quantile(revenue_employee,.25))) %>% #define each Industry's IQR
+  ungroup() %>% #ungroup to filter outliers
+  filter((revenue_employee < mean(revenue_employee) + 1.5*iqr) & (revenue_employee > mean(revenue_employee) - 1.5*iqr))%>% #filter outliers
+  mutate(mean_revenue_employee = mean(revenue_employee)) %>%
+  mutate(sqr_resid = (revenue_employee - mean_revenue_employee)^2)  %>% #get squared residuals for standard deviation while ungrouped
+  group_by(Industry) %>% #regroup to generate industry statistics
+  summarize(n_company = n(), tot_revenue = sum(revenue_employee), avg_revenue = mean(revenue_employee), med_revenue = median(revenue_employee), sd_revenue = sqrt(sum(sqr_resid)/sum(revenue_employee)))  %>% #summarize industry statistics
+  arrange(desc(avg_revenue)) %>% 
+  mutate(Industry = fct_reorder(Industry, avg_revenue)) #arrange so that largest average industry is on top
+
+
+ggplot(ny_revenue, aes(fill=tot_revenue, Industry, avg_revenue)) + #this graph will show each industry versus average employees, colored by total employees in the industry in NY state
+  geom_bar(aes(Industry, avg_revenue), stat = 'identity') + #bar length defined by average employee in industry
+  geom_errorbar(aes(x = Industry, ymin=avg_revenue-sd_revenue, ymax = avg_revenue+sd_revenue)) + #error bars +/- standard deviation
+  coord_flip() #show industry on y-axis
+
 
 ```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
