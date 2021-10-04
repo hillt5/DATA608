@@ -7,65 +7,69 @@
 #    http://shiny.rstudio.com/
 #
 
+library(shiny)
 library(ggplot2)
 library(dplyr)
-library(plotly)
-library(shiny)
-library(DT)
+
 
 us_mort <- read.csv('https://raw.githubusercontent.com/charleyferrari/CUNY_DATA_608/master/module3/data/cleaned-cdc-mortality-1999-2010-2.csv')
 
 
+us_mort <- us_mort %>%
+  group_by(Year, ICD.Chapter) %>%
+  mutate(us_pop = sum(Population)) %>% #get US population for each Year
+  mutate(us_deaths = sum(Deaths)) %>% #get Deaths for each year per cause of death
+  ungroup() %>%
+  mutate(average_rate = round(100000*us_deaths/us_pop,1)) #calculate average rate per 100,0000
+#    mutate(above_average = if_else(Crude.Rate > average_rate,'Yes','No'))
+#ended up not using this code as it removed datapoints when year went from above to below average
 
+# Define UI for application that draws a histogram
 ui <- fluidPage(
-  titelPanel = "Raw Mortality by Cause of Death, United States",
-  fluidRow(
-    column(3,
-           wellPanel(
-             #select cause of death
-             selectInput("show_vars", "Causes of Death:",
-                         unique(us_mort$ICD.Chapter)),
-             
-             # select state
-             selectizeInput("stateInput", "State",
-                            choices = unique(us_mort$state),  
-                            selected="Alabama", multiple =FALSE),
+  headerPanel = "Raw Mortality by Cause of Death, United States",
+  wellPanel(
     
-            #select range of dates
-            sliderInput("yearInput", label = "Time period, Years", min = 1999, max = 2010, value = c(1999,2010))
-            )
-    ),
-           
-    mainPanel(
-      plotOutput("improvement_plt")
-    )
+    #select cause of death
+    selectInput("show_vars", "Select Cause of Death:",
+                unique(us_mort$ICD.Chapter)),
+    
+    # select state
+    selectizeInput("stateInput", "Select State to Compare:",
+                   choices = unique(us_mort$State),  
+                   selected="NY", multiple =FALSE),
+    
+    #select range of dates
+    sliderInput("yearInput", label = "Time period, Years", min = 1999, max = 2010, value = c(1999,2010), sep = "")
+  ),
+  mainPanel(
+    plotOutput("improvement_plt")
   )
 )
 
+
+
+# Define server logic required to draw a histogram
 server <- function(input, output) {
   
-  #output range
-  output$range <- renderPrint({input$slider1})
-  
-  ## year filter
-  output_df <- reactive({
-    us_mort%>%
-      filter(state == input$stateInput,
-             condition %in% input$ICD.Chapter, 
-             year >= input$yearInput[1],
-             year <= input$yearInput[2])
-  })
-  
   output$improvement_plt <- renderPlot({
+    
+    #filters
+    output_df <- us_mort%>%
+      filter(State == input$stateInput,
+             ICD.Chapter %in% input$show_vars,
+             Year >= input$yearInput[1] & Year <= input$yearInput[2])
+    
     ggplot(output_df) +
-      geom_line(aes(x = Year, y = Raw.count 
-                    #col = average_01
-      )) +
+      geom_line(aes(x = Year, y = Crude.Rate)) +
+      geom_line(aes(x = Year, y = average_rate), linetype = 'dashed', color = 'red') +
       xlab('Year') +
-      ylab('Mortality Rate') +
-      ggtitle('Change in Mortality Rate over Time')
+      ylab('Mortality Rate for Selected Cause of Death') +
+      ggtitle('Change in Mortality Rate over Time compared to US Average (dashed)')
+    
+    
   })
 }
+
 
 
 
