@@ -24,23 +24,21 @@ Your apps must be deployed, I won’t be accepting raw files. Luckily, you can p
 
 ```{r, libraries, message = FALSE}
 
-rsconnect::setAccountInfo(name = 'thomas-hill',
-                          token = 'E8459A923D9F41B76A943F56C7A5F9A1',
-                          secret = <SECRET>)
+
+
+rsconnect::setAccountInfo(name='thomas-hill',
+			  token='E8459A923D9F41B76A943F56C7A5F9A1',
+			  secret='xkN28A9k1WkNTiKNZB/cXS3xZ72UfWVXpHsY911K')
 ```
 
 ```{r,}
 
 
 
-library(dplyr)
+library(rsconnect)
+rsconnect::deployApp('C:\Users\janep\Documents\GitHub\DATA608\improvement_app')
 
-
-```
-```{r, upload-csv}
-
-us_mort <- read.csv('https://raw.githubusercontent.com/charleyferrari/CUNY_DATA_608/master/module3/data/cleaned-cdc-mortality-1999-2010-2.csv')
-
+rsconnect::deployApp('C:\Users\janep\Documents\GitHub\DATA608\mortality')
 
 ```
 
