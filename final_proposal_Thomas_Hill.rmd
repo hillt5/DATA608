@@ -1,0 +1,75 @@
+---
+title: "Module 3 for DATA 608"
+author: "Thomas Hill"
+output:
+  html_document: default
+  html_notebook: default
+---
+
+**Interactive Visualizations in R**
+
+
+I have provided you with data about mortality from all 50 states and the District of Columbia.Please access it at
+
+https://github.com/charleyferrari/CUNY_DATA608/tree/master/module3/data
+
+You are invited to gather more data from our provider, the CDC WONDER system, at
+
+https://wonder.cdc.gov 
+
+This assignment must be done in R. It must be done using the ‘shiny’ package.  
+It is recommended you use an R package that supports interactive graphing such as plotly, or vegalite, but this is not required.  
+Your apps must be deployed, I won’t be accepting raw files. Luckily, you can pretty easily deploy apps with a free account at shinyapps.io  
+
+
+```{r, libraries, message = FALSE}
+
+
+
+rsconnect::setAccountInfo(name='thomas-hill',
+			  token='E8459A923D9F41B76A943F56C7A5F9A1',
+			  secret='xkN28A9k1WkNTiKNZB/cXS3xZ72UfWVXpHsY911K')
+```
+
+```{r,}
+
+
+
+library(rsconnect)
+rsconnect::deployApp('C:\Users\janep\Documents\GitHub\DATA608\improvement_app')
+
+rsconnect::deployApp('C:\Users\janep\Documents\GitHub\DATA608\mortality')
+
+```
+
+
+
+```{r, explore}
+
+
+head(us_mort)
+
+unique(us_mort$ICD.Chapter)
+
+usmort_2010 <- us_mort %>%
+  filter(Year == 2010)
+
+```
+
+
+Data is available for years 1999 - 2010. There are 19 different designations of mortality as classified by the ICD-10 code for diseases. This provides coding for common types of death, like infection, neoplasia, or circulatory system, as well as miscellaneous categories for diseases not elsewhere classified or causes of death considered external to an underlying diseasae. This would include accidents, self-inflicted death, or surgical complications. 
+
+__Question 1:__ As a researcher, you frequently compare mortality rates from particular causes across different States. You need a visualization that will let you see (for 2010 only) the crude mortality rate, across all States, from one cause (for example, Neoplasms, which are effectively cancers). Create a visualization that allows you to rank States by crude mortality for each cause of death.
+
+
+create a table that generates Crude.Rate for 2010 by each state. Allow user to pick the ICD chapter for cause of death. Add buttons to list by state, crude rate ascending or descending. Create extra entry for US average
+
+```{r, group-by-disease}
+
+usmort_2010[usmort_2010$ICD.Chapter == 'Certain infectious and parasitic diseases',]
+
+
+
+```
+
+__Question 2:__ Often you are asked whether particular States are improving their mortality rates (per cause) faster than, or slower than, the national average. Create a visualization that lets your clients see this for themselves for one cause of death at the time. Keep in mind that the national average should be weighted by the national population.
