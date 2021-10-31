@@ -1,0 +1,64 @@
+<head><title>Assignment 5, Introduction to Javascript</title></head>
+
+<body>
+
+<h1>Assignment 5, Introduction to Javascript</h1>
+<h2>Thomas Hill, October 31, 2021</h2>
+<h3>Beginner: Question 2</h3>
+
+
+
+<script>
+
+    document.write('<p>2.) Create a function that takes an input number, and prints a table with the first 20 multiples of the number, in order 5x4.</p><br>');
+    </script>
+    
+
+    <p>
+    <form>
+        <input type="button" value="Enter first number:" onClick="table_show();">
+        <input id="num" type="number" size="4">
+    </form>
+    </p>
+
+    <script type="text/javascript">
+    
+
+    
+        // My code is based on the following stack overflow example: https://stackoverflow.com/questions/14643617/create-table-using-javascript
+            
+            function tableCreate(input_num) {
+                const body = document.body,
+                    tbl = document.createElement('table');
+                tbl.style.width = '100px';
+                tbl.style.border = '1px solid black';
+                for (let i = 0; i < 5; i++) {
+                    const tr = tbl.insertRow();
+                    for (let j = 0; j < 4; j++) {
+                    if (i === 5 && j === 4) {
+                        break;
+                    } else {
+                        var cell_mult = input_num * (i + 1) * (j + 1) //find the multiples
+                        const td = tr.insertCell();
+                        td.appendChild(document.createTextNode(`Cell ${cell_mult}`));
+                        td.style.border = '1px solid black';
+                    }
+                }
+            };
+            body.appendChild(tbl);
+        };
+    
+
+            function table_show(){
+                var t = document.getElementById('table1');
+                tableCreate(document.getElementById('num').value);
+            }
+        </script>
+    
+        
+    <div id = 'table1'></div>
+        
+    
+
+</body>
+</html>

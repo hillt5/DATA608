@@ -1,0 +1,85 @@
+<html>
+
+<!--
+    
+    Note to Students:
+        This is a very short introduction to using Javascript in the browser.
+        To see this as a webpage, you have to start a *Local Web Server*. There are many ways to do this: since you all have python installed, we will use python.
+        - Open terminal
+        - 'cd' into the directory where this html file is (js_in_webpage.html)
+        - Type the following into the terminal and hit 'enter':
+            
+            ### IN PYTHON 2 ### 
+            python -m SimpleHTTPServer
+            
+            ### IN PYTHON 3 ### 
+            python -m http.server 
+            your server should read something like: Serving HTTP on 0.0.0.0 port 8000 ...
+        - now go to any browser and type in the HTTP address and the filename: something like:
+            http://0.0.0.0:8000/js_in_webpage.html
+            or
+            http://localhost:8000/js_in_webpage.html
+        
+        - Congrats: you now have a local HTTP server running. Now, every time you change this file and save it, when you reload the browser you will see your changes!
+-->
+
+<head><title>Assignment 5, Introduction to Javascript</title></head>
+
+<body>
+
+<h1>Assignment 5, Introduction to Javascript</h1>
+<h2>Thomas Hill, October 31, 2021</h2>
+<h3>Beginner: Question 1</h3>
+
+
+<script type="text/javascript">
+
+    document.write('<p>1.) Create a function to reverse any word that you type in. This can be typed into either an input box or an alert box, and then print the result in a box or on the webpage.</p><br>');
+    
+    
+    </script>
+    
+    
+    
+    
+    <script type="text/javascript">
+    
+    
+    document.write('<br><p>Please enter a word to reverse:')
+    
+    // Code taken from <https://www.freecodecamp.org/news/how-to-reverse-a-string-in-javascript-in-3-different-ways-75e4763c68cb/>
+    
+        function str_reverse(fxn_input){
+    
+    
+            var split_string = String(fxn_input).split(""); // create an array with each character of the input as entries
+    
+            var reversed_array = split_string.reverse(); // reverse the order of the array
+    
+            var reversed_string = reversed_array.join("");  //take the entries of the reversed array and make a reversed string
+    
+            var str = "Your word reversed is " + reversed_string + ".";
+    
+            return(str);
+        };
+    
+        function get_str(){
+            var t = document.getElementById("target1");
+            t.innerHTML = str_reverse(document.getElementById('input_str1').value);
+        }
+    
+    </script>
+    
+    <p>
+    <form>
+        <input type ='text' id="input_str1">
+        <input type="button" value='Enter here' onClick='get_str();'>
+    </form>
+    </p>
+    
+    <div id="target1"></div>
+    
+
+    
+</body>
+</html>
