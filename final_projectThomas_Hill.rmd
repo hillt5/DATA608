@@ -1,0 +1,90 @@
+---
+title: "Final Project Proposal for DATA 608"
+author: "Thomas Hill"
+output:
+  html_document: default
+  html_notebook: default
+---
+
+
+
+
+Final Project Proposal: New York State Maternity and Labor Statistics
+
+
+
+Maternity and labor are a crucial time for many health interventions, and New York state notably mandates basic statistics be available for a few dozen characteristics of delivery. The route of delivery, fetal presentation, and use of anesthesia are all critical elements of the process, and understanding the prevalence and trends of each method may offer improvements in expectations to practitioners as well as laypeople.
+
+
+```{r, csv}
+
+ny_maternity <- read.csv('https://raw.githubusercontent.com/hillt5/DATA608/main/Hospital_Maternity_Information__Beginning_2008.csv')
+
+
+```
+
+
+The dataset available for NY state offers the required statistics for a period 2008 – 2017, separated by each hospital and its location. For this project, my goals are to provide some visualizations and apps for laypeople to explore maternity statistics.
+
+
+```{r, colnames}
+
+head(ny_maternity)
+
+colnames(ny_maternity)
+```
+
+
+```{r, unique-entries}
+
+unique(ny_maternity$Year)
+
+length(unique(ny_maternity$Facility.ID))
+
+unique(ny_maternity$Measure.Name)
+
+unique(ny_maternity$Denominator)
+
+unique(ny_maternity$Category)
+
+
+```
+```{r, birth-defects}
+bd_df <- read.csv('https://raw.githubusercontent.com/hillt5/DATA608/main/NYS_BD') #data only available in 3-year increments (e.g., 2000-2002)
+bd_df$total_defects <- rowSums(bd_df[,c(3:51)]) ## sum defects for each row per county
+
+```
+
+
+```{r, ny-pop}
+ny_pop <- read.csv('https://raw.githubusercontent.com/hillt5/DATA608/main/Annual_Population_Estimates_for_New_York_State_and_Counties__Beginning_1970')
+
+ny_pop_08_09 <- ny_pop %>%
+  filter(Program.Type == 'Intercensal Population Estimate' & (Year == 2008 | Year == 2009)) #intercensal is most accurate prediction of population
+
+ny_pop_10 <- ny_pop %>%
+  filter(Program.Type == 'Census Base Population' & Year == 2010) #census year, exact count
+ 
+ny_pop_1117 <- ny_pop %>%
+  filter(Program.Type == 'Postcensal Population Estimate' & Year > 2010 & Year < 2018) #estimate based on last census
+
+
+```
+
+
+Source dataset:
+
+https://health.data.ny.gov/Health/Hospital-Maternity-Information-Beginning-2008/net3-iygw
+
+
+
+Potential adjunct datasets: 
+
+https://health.data.ny.gov/Health/Birth-Defect-Prevalence-Beginning-1992/mz8x-255x
+ 
+
+https://health.data.ny.gov/Health/Vital-Statistics-Live-Births-and-Fertility-Rates-b/c2tx-jecb
+ 
+
+https://data.ny.gov/Government-Finance/Annual-Population-Estimates-for-New-York-State-and/krt9-ym2k
+
