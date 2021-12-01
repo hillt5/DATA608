@@ -10,6 +10,7 @@ output:
 
 library(ggplot2)
 library(dplyr)
+library(stringr)
 library(sf)
 
 ```
@@ -109,6 +110,285 @@ leaflet(ny_shp)  %>%
                                                bringToFront = TRUE)
   )
 ```
+
+```{r, libraries}
+
+library(ggplot2)
+library(dplyr)
+library(ggmap)
+library(fuzzyjoin)
+library(stringr)
+```
+
+```{r, pregnancy-df}
+
+pregnancy_df <- read.csv('https://raw.githubusercontent.com/hillt5/DATA608/main/Hospital_Maternity_Information__Beginning_2008.csv')
+```
+
+```{r, preg-unique}
+
+pregnancy_fix <- pregnancy_df %>%
+  mutate(Hospital.County = str_to_title(Hospital.County))
+
+unique(pregnancy_fix$Hospital.County)
+
+unique(pregnancy_df$Category)
+
+pregnancy_df %>%
+  filter(Hospital.County == 'KINGS', Measure.Name == 'Attended by Licensed Midwife', Year == 2017) %>%
+  ggplot(aes(Hospital.Name, Percent)) +
+  geom_col() +
+  coord_flip()
+
+pregnancy_counties <- pregnancy_df %>%
+  group_by(Hospital.County) %>%
+  summarize(n_hospitals = length(unique(Hospital.Name))) %>%
+  arrange(desc(n_hospitals))
+pregnancy_counties
+merge(y = bc_counties, x = pregnancy_counties, by.y = ny_bc$County, by.x = pregnancy_counties$Hospital.County)
+pregnancy_counties
+ny_bc$County <- toupper(ny_bc$County)
+
+bc_counties <- ny_bc %>%
+  group_by(County) %>%
+  summarize(n_hospitals = length(unique(Hospital.Name))) %>%
+  arrange(desc(n_hospitals))
+bc_counties
+
+ny_bc %>%
+  ggplot(aes(y = County)) +
+  geom_bar()
+
+
+```
+```{r, preg-fix}
+pregnancy_df$Hospital.County <- str_to_title(pregnancy_df$Hospital.County)
+
+pregnancy_fix_1 <- pregnancy_df %>%
+  filter(Hospital.County %in% c('Albany', 'Columbia', 'Greene', 'Rensselaer', 'Saratoga', 'Schenectady', 'Warren', 'Washington')) %>%
+  mutate(Region = 'Capital Region')
+pregnancy_fix_2 <- pregnancy_df %>%
+  filter(Hospital.County %in% c('Cayuga', 'Cortland', 'Madison', 'Onondaga', 'Oswego')) %>%
+  mutate(Region = 'Central New York')
+pregnancy_fix_3 <- pregnancy_df %>%
+  filter(Hospital.County %in% c('Genessee', 'Livingston', 'Monroe', 'Ontario', 'Orleans', 'Seneca', 'Wayne', 'Wyoming', 'Yates')) %>%
+  mutate(Region = 'Finger Lakes')
+pregnancy_fix_4 <- pregnancy_df %>%
+  filter(Hospital.County %in% c('Nassau', 'Suffolk')) %>%
+  mutate(Region = 'Long Island')
+pregnancy_fix_5 <- pregnancy_df %>%
+  filter(Hospital.County %in% c('Duchess', 'Orange', 'Putnam', 'Rockland', 'Sullivan', 'Ulster', 'Westchester')) %>%
+  mutate(Region = 'Mid-Hudson')
+pregnancy_fix_6 <- pregnancy_df %>%
+  filter(Hospital.County %in% c('Fulton', 'Herkimer', 'Montgomery', 'Oneida', 'Otsego', 'Schoharie')) %>%
+  mutate(Region = 'Mohawk Valley')
+pregnancy_fix_7 <- pregnancy_df %>%
+  filter(Hospital.County %in% c('Bronx', 'Kings', 'New York', 'Queens', 'Richmond')) %>%
+  mutate(Region = 'New York City')
+pregnancy_fix_8 <- pregnancy_df %>%
+  filter(Hospital.County %in% c('Clinton', 'Essex', 'Franklin', 'Hamilton', 'Jefferson', 'Lewis', 'Saint Lawrence')) %>%
+  mutate(Region = 'North Country')
+pregnancy_fix_9 <- pregnancy_df %>%
+  filter(Hospital.County %in% c('Broome', 'Chemung', 'Chenango', 'Delaware', 'Schuyler', 'Steuben', 'Tioga', 'Tompkins')) %>%
+  mutate(Region = 'Southern Tier')
+pregnancy_fix_10 <- pregnancy_df %>%
+  filter(Hospital.County %in% c('Allegany', 'Cattaraugus', 'Chautauqua', 'Niagra')) %>%
+  mutate(Region = 'Western New York')
+pregnancy_fix <- rbind(pregnancy_fix_1, pregnancy_fix_2, pregnancy_fix_3, pregnancy_fix_4, pregnancy_fix_5, pregnancy_fix_6, pregnancy_fix_7, pregnancy_fix_8, pregnancy_fix_9, pregnancy_fix_10)
+
+
+head(pregnancy_fix)
+
+```
+
+```{r, ny_bc counties}
+
+ny_bc_cap <- ny_bc %>%
+  filter(County %in% c('ALBANY' , 'COLUMBIA' , 'GREENE', 'RENSSELAER', 'SARATOGA', 'SCHENECTADY', 'WARREN', 'WASHINGTON')) %>%
+  mutate(Region = 'Capital Region')
+ny_bc_1 <- ny_bc %>%
+  filter(County %in% c('Albany', 'Columbia', 'Greene', 'Rensselaer', 'Saratoga', 'Schenectady', 'Warren', 'Washington')) %>%
+  mutate(Region = 'Capital Region')
+ny_bc_2 <- ny_bc %>%
+  filter(County %in% c('Cayuga', 'Cortland', 'Madison', 'Onondaga', 'Oswego')) %>%
+  mutate(Region = 'Central New York')
+ny_bc_3 <- ny_bc %>%
+  filter(County %in% c('Genessee', 'Livingston', 'Monroe', 'Ontario', 'Orleans', 'Seneca', 'Wayne', 'Wyoming', 'Yates')) %>%
+  mutate(Region = 'Finger Lakes')
+ny_bc_4 <- ny_bc %>%
+  filter(County %in% c('Nassau', 'Suffolk')) %>%
+  mutate(Region = 'Long Island')
+ny_bc_5 <- ny_bc %>%
+  filter(County %in% c('Duchess', 'Orange', 'Putnam', 'Rockland', 'Sullivan', 'Ulster', 'Westchester')) %>%
+  mutate(Region = 'Mid-Hudson')
+ny_bc_6 <- ny_bc %>%
+  filter(County %in% c('Fulton', 'Herkimer', 'Montgomery', 'Oneida', 'Otsego', 'Schoharie')) %>%
+  mutate(Region = 'Mohawk Valley')
+ny_bc_7 <- ny_bc %>%
+  filter(County %in% c('Bronx', 'Kings', 'New York', 'Queens', 'Richmond')) %>%
+  mutate(Region = 'New York City')
+ny_bc_8 <- ny_bc %>%
+  filter(County %in% c('Clinton', 'Essex', 'Franklin', 'Hamilton', 'Jefferson', 'Lewis', 'Saint Lawrence')) %>%
+  mutate(Region = 'North Country')
+ny_bc_9 <- ny_bc %>%
+  filter(County %in% c('Broome', 'Chemung', 'Chenango', 'Delaware', 'Schuyler', 'Steuben', 'Tioga', 'Tompkins')) %>%
+  mutate(Region = 'Southern Tier')
+ny_bc_10 <- ny_bc %>%
+  filter(County %in% c('Allegany', 'Cattaraugus', 'Chautauqua', 'Niagra')) %>%
+  mutate(Region = 'Western New York')
+ny_bc_fix <- rbind(ny_bc_1, ny_bc_2, ny_bc_3, ny_bc_4, ny_bc_5, ny_bc_6, ny_bc_7, ny_bc_8, ny_bc_9, ny_bc_10)
+
+ny_bc_fix <- ny_bc_fix %>%
+  mutate(level_fct = case_when(
+    Level == 4 ~ 'Regional Center',
+    Level == 3 ~ 'Level 3',
+    Level == 2 ~ 'Level 2',
+    Level == 1 ~ 'Level 1'
+  ))
+ny_bc_fix
+ggplot(ny_bc_fix) +
+  geom_bar(aes(x = Region, fill = level_fct)) +
+  coord_flip()
+
+```
+
+
+
+
+```{r, birth-defect}
+
+bd_df <- read.csv('https://raw.githubusercontent.com/hillt5/DATA608/main/NYS_BD')
+```
+
+```{r, bd-df}
+
+
+pregnancy_df %>%
+  group_by(Hospital.Name) %>%
+  select(Facility.ID, Hospital.Name) %>%
+  distinct() %>%
+  merge(ny_bc, by.x =  "Facility.ID", by.y = 'ID', all.x = TRUE) %>%
+  write.csv()
+
+head(bd_df)
+
+```
+
+```{r, summary-bd}
+bd_df <- read.csv('https://raw.githubusercontent.com/hillt5/DATA608/main/NYS_BD')
+bd_df$total_defects <- rowSums(bd_df[,c(3:51)])
+
+```
+
+
+```{r, ny-pop}
+
+ny_pop <- read.csv('https://raw.githubusercontent.com/hillt5/DATA608/main/Annual_Population_Estimates_for_New_York_State_and_Counties__Beginning_1970')
+
+
+
+```
+
+
+
+```{r, pop}
+
+ny_pop <- read.csv('https://raw.githubusercontent.com/hillt5/DATA608/main/Annual_Population_Estimates_for_New_York_State_and_Counties__Beginning_1970')
+
+ny_pop_08_09 <- ny_pop %>%
+  filter(Program.Type == 'Intercensal Population Estimate' & (Year == 2008 | Year == 2009))
+
+ny_pop_10 <- ny_pop %>%
+  filter(Program.Type == 'Census Base Population' & Year == 2010)
+  
+ny_pop_1117 <- ny_pop %>%
+  filter(Program.Type == 'Postcensal Population Estimate' & Year > 2010 & Year < 2018)
+
+ny_pop_08_17 <- rbind(ny_pop_08_09, ny_pop_10, ny_pop_1117)
+
+View(ny_pop_08_17)
+
+ny_pop_08_17 %>%
+  filter(Geography != 'New York State') %>%
+  group_by(Year) %>%
+  summarize(sum(Population))
+
+```
+
+
+```{r, birth-centers}
+
+ny_bc <- read.csv('https://raw.githubusercontent.com/hillt5/DATA608/main/Final%20Project/perinatal_centers')
+
+
+head(ny_bc)
+```
+
+
+```{r, map}
+
+states <- map_data('state')
+ny_map <- states[states$region == 'new york',]
+
+
+nyc_map <- ny_map[(ny_map$lat <  40.9140488328104 & ny_map$long <= -73.7),]
+
+p <- ggplot() + coord_fixed() +
+  xlab("") + ylab("")
+
+ny_base <- p + geom_polygon(data=ny_map, aes(x=long, y=lat, group=group), 
+                               colour="light green", fill="light green") +
+   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+        panel.background = element_rect(fill = 'white', colour = 'white'), 
+        axis.line = element_line(colour = "white"), legend.position="none",
+        axis.ticks=element_blank(), axis.text.x=element_blank(),
+        axis.text.y=element_blank())
+
+nyc_base <- p + geom_polygon(data=nyc_map, aes(x=long, y=lat, group=group), 
+                               colour="light green", fill="light green") +
+   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+        panel.background = element_rect(fill = 'white', colour = 'white'), 
+        axis.line = element_line(colour = "white"), legend.position="none",
+        axis.ticks=element_blank(), axis.text.x=element_blank(),
+        axis.text.y=element_blank())
+
+
+map_data <- nyc_base +
+  geom_point(data=ny_bc[(ny_bc$County == 'Queens' | ny_bc$County == 'Kings' | ny_bc$County =='Richmond' | ny_bc$County =='Bronx' | ny_bc$County == 'New York'),], 
+             aes(x=Longitude, y=Latitude, fill = Level), colour="Deep Pink", 
+             pch=21, size=5, alpha=I(0.7))
+
+
+
+map_data
+```
+
+```{r, join}
+missing_id <- c(111, 367, 401, 461, 513, 552, 565, 585, 708, 718, 739, 755, 812, 815, 830, 858, 870, 989)
+
+pregnancy_missing <- pregnancy_df[pregnancy_df$Facility.ID == missing_id,] %>%
+  select(Facility.ID, Hospital.Name, Hospital.County, Year, Count) %>%
+    group_by(Hospital.Name, Year)  %>%
+    summarize(total = sum(Count)) %>%
+    mutate(less_than_200 <- total < 200) 
+
+pregnancy_missing
+mean(pregnancy_missing$`less_than_200 <- total < 200`, na.rm= TRUE)
+
+pregnancy_df[(pregnancy_df$Category == 'All Deliveries'),] %>%
+  group_by(Hospital.Name) %>%
+  select(Facility.ID, Hospital.Name, Count) %>%
+  summarize(total = sum(Count)) %>%
+  arrange(desc(total))
+
+
+pregnancy_missing[(pregnancy_missing$Category == 'All Deliveries'),] %>%
+  group_by(Hospital.Name) %>%
+  select(Facility.ID, Hospital.Name, Count) %>%
+  summarize(total = sum(Count)) %>%
+  arrange(desc(total))
+
+````
 
 
 
