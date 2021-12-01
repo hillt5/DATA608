@@ -6,7 +6,13 @@ output:
   html_notebook: default
 ---
 
+```{r, library}
 
+library(ggplot2)
+library(dplyr)
+library(sf)
+
+```
 
 
 Final Project Proposal: New York State Maternity and Labor Statistics
@@ -68,8 +74,42 @@ ny_pop_10 <- ny_pop %>%
 ny_pop_1117 <- ny_pop %>%
   filter(Program.Type == 'Postcensal Population Estimate' & Year > 2010 & Year < 2018) #estimate based on last census
 
+ny_pop_0817 <- rbind(ny_pop_08_09, ny_pop_10, ny_pop_1117) #bind into one complete dataframe
 
 ```
+
+```{r, ny-map}
+
+require(rgdal)
+require(ggplot2)
+fn <- file.path(tempdir(), "GBR_adm_gdb.zip", fsep = "\\")
+download.file("https://gis.ny.gov/gisdata/fileserver/?DSID=927&file=NYS_Civil_Boundaries.shp.zip", fn)
+utils::unzip(fn, exdir = tempdir())
+shp <- readOGR(dsn = file.path(tempdir(), "Counties_Shoreline.shp"))
+
+ny_shp <- spTransform(shp, CRS("+proj=longlat +ellps=GRS80"))
+
+```
+
+```{r, ny-shape}
+
+leaflet(ny_shp)  %>%
+      setView(lng = -76.0, lat = 42.75, zoom = 6.49) %>%
+      addTiles() %>%
+      addPolygons(fillColor ='gray' ,
+                  weight = 1,
+                  opacity = 1,
+                  color = 'white',
+                  dashArray = '3',
+                  fillOpacity = 0.35,
+                  highlight = highlightOptions(weight = 3,
+                                               color = 'red',
+                                               dashArray = '',
+                                               fillOpacity = 0.25,
+                                               bringToFront = TRUE)
+  )
+```
+
 
 
 Source dataset:
