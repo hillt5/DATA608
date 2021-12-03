@@ -9,10 +9,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Thomas Hill" />
+<meta name="author" content="by Thomas Hill" />
 
 
-<title>Final Project Proposal for DATA 608</title>
+<title>Final Project for DATA 608</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1755,8 +1755,8 @@ pre code {
 
 
 
-<h1 class="title toc-ignore">Final Project Proposal for DATA 608</h1>
-<h4 class="author">Thomas Hill</h4>
+<h1 class="title toc-ignore">Final Project for DATA 608</h1>
+<h4 class="author">by Thomas Hill</h4>
 
 </div>
 
@@ -1764,53 +1764,457 @@ pre code {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5saWJyYXJ5KGdncGxvdDIpXG5saWJyYXJ5KGRwbHlyKVxubGlicmFyeShyZ2RhbClcblxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5saWJyYXJ5KGdncGxvdDIpXG5saWJyYXJ5KGRwbHlyKVxubGlicmFyeShzdHJpbmdyKVxubGlicmFyeShzZilcbmxpYnJhcnkodGlkeXIpXG5cbmBgYCJ9 -->
 <pre class="r"><code>
 library(ggplot2)
 library(dplyr)
-library(rgdal)
+library(stringr)
+library(sf)
+library(tidyr)
 </code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Final Project Proposal: New York State Maternity and Labor Statistics</p>
-<p>Maternity and labor are a crucial time for many health interventions, and New York state notably mandates basic statistics be available for a few dozen characteristics of delivery. The route of delivery, fetal presentation, and use of anesthesia are all critical elements of the process, and understanding the prevalence and trends of each method may offer improvements in expectations to practitioners as well as laypeople.</p>
+<div id="final-project-new-york-state-maternity-and-labor-statistics" class="section level1">
+<h1>Final Project: New York State Maternity and Labor Statistics</h1>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Pregnancy and childbirth are a critical period for both mother and child. Currently, the most common place of birth remains at a healthcare facility, whether at a birth center or labor and delivery department within a hospital. To help expectant patients and their families make informed decisions about pre-booking a delivery, the state of New York mandates that each facility of a certain size must provide annual aggregate statistics to better inform the decision.</p>
+<p>The provided statistics at a minimum must include several maternity-related procedures, including rate of cesarean sections versus vaginal deliveries, breech births delivered vaginally, and deliveries by midwives, as well as elements of medical care such as deliveries using forceps and rates of analgesia/anesthesia, episiotomies, and induction/augmentation of labor. The NY Department of Health adds the caveat that these statistics do not inform about a specific healthcare practitioner’s preferences, but are useful in playing an active part in planning for childbirth.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5ueV9tYXRlcm5pdHkgPC0gcmVhZC5jc3YoJ2h0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9oaWxsdDUvREFUQTYwOC9tYWluL0hvc3BpdGFsX01hdGVybml0eV9JbmZvcm1hdGlvbl9fQmVnaW5uaW5nXzIwMDguY3N2JylcblxuXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5wcmVnbmFuY3lfZGYgPC0gcmVhZC5jc3YoJ2h0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9oaWxsdDUvREFUQTYwOC9tYWluL0hvc3BpdGFsX01hdGVybml0eV9JbmZvcm1hdGlvbl9fQmVnaW5uaW5nXzIwMDguY3N2JylcblxuXG5gYGAifQ== -->
 <pre class="r"><code>
-ny_maternity &lt;- read.csv(&#39;https://raw.githubusercontent.com/hillt5/DATA608/main/Hospital_Maternity_Information__Beginning_2008.csv&#39;)
+pregnancy_df &lt;- read.csv(&#39;https://raw.githubusercontent.com/hillt5/DATA608/main/Hospital_Maternity_Information__Beginning_2008.csv&#39;)
 </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>The dataset available for NY state offers the required statistics for a period 2008 – 2017, separated by each hospital and its location. For this project, my goals are to provide some visualizations and apps for laypeople to explore maternity statistics.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5oZWFkKG55X21hdGVybml0eSlcblxuY29sbmFtZXMobnlfbWF0ZXJuaXR5KVxuYGBgIn0= -->
-<pre class="r"><code>
-head(ny_maternity)
-
-colnames(ny_maternity)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG51bmlxdWUobnlfbWF0ZXJuaXR5JFllYXIpXG5cbmxlbmd0aCh1bmlxdWUobnlfbWF0ZXJuaXR5JEZhY2lsaXR5LklEKSlcblxudW5pcXVlKG55X21hdGVybml0eSRNZWFzdXJlLk5hbWUpXG5cbnVuaXF1ZShueV9tYXRlcm5pdHkkRGVub21pbmF0b3IpXG5cbnVuaXF1ZShueV9tYXRlcm5pdHkkQ2F0ZWdvcnkpXG5cblxuYGBgIn0= -->
-<pre class="r"><code>
-unique(ny_maternity$Year)
-
-length(unique(ny_maternity$Facility.ID))
-
-unique(ny_maternity$Measure.Name)
-
-unique(ny_maternity$Denominator)
-
-unique(ny_maternity$Category)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29sbmFtZXMocHJlZ25hbmN5X2RmKVxudW5pcXVlKHByZWduYW5jeV9kZiRZZWFyKSAjeWVhcnMgaW5jbHVkZWRcbmxlbmd0aCh1bmlxdWUocHJlZ25hbmN5X2RmJEhvc3BpdGFsLk5hbWUpKSAjbnVtYmVyIG9mIGhvc3BpdGFsc1xudW5pcXVlKHByZWduYW5jeV9kZiRIb3NwaXRhbC5Db3VudHkpICNjb3VudGllc1xuXG5gYGAifQ== -->
+<pre class="r"><code>colnames(pregnancy_df)
+unique(pregnancy_df$Year) #years included
+length(unique(pregnancy_df$Hospital.Name)) #number of hospitals
+unique(pregnancy_df$Hospital.County) #counties
 </code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>The dataset available for NY state offers the required statistics for a period 2008 – 2017, separated by each hospital and its location. It includes 146 hospitals spread throughout about 80% of New York’s 63 counties. There are two columns for ‘Rest of State’ and ‘Statewide’ that need to be omitted for generating county statistics. The law in question specifies that reporting is mandatory for each facility performing more than 200 deliveries per year, which we can verify.</p>
+</div>
+<div id="birth-rate-by-hospital" class="section level2">
+<h2>Birth Rate by Hospital</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5hbm51YWxfaG9zcGl0YWxfYmlydGhzX2RmIDwtIHByZWduYW5jeV9kZiAlPiUgXG4gIGZpbHRlcihNZWFzdXJlLk5hbWUgPT0gJ1RvdGFsIEJpcnRocycsIEhvc3BpdGFsLk5hbWUgIT0gYygnU3RhdGV3aWRlJywgJ1Jlc3Qgb2YgU3RhdGUnKSkgJT4lICNzZWxlY3QgdG90YWwgc3RhdGlzdGljc1xuICBzZWxlY3QoWWVhciwgSG9zcGl0YWwuTmFtZSwgSG9zcGl0YWwuQ291bnR5LCBDb3VudCkgJT4lXG4gIGdyb3VwX2J5KFllYXIsIEhvc3BpdGFsLk5hbWUpICU+JVxuICBtdXRhdGUoYW5udWFsX2hvc3BpdGFsX2JpcnRocyA9IHN1bShDb3VudCkpICU+JVxuICBtdXRhdGUoYWJvdmVfMjAwID0gYW5udWFsX2hvc3BpdGFsX2JpcnRocyA+MjAwKSAgJT4lXG4gIGFycmFuZ2UoYW5udWFsX2hvc3BpdGFsX2JpcnRocylcblxuXG5oZWFkKGFubnVhbF9ob3NwaXRhbF9iaXJ0aHNfZGYpXG4xMDAqcm91bmQobWVhbihhbm51YWxfaG9zcGl0YWxfYmlydGhzX2RmJGFib3ZlXzIwMCksMykgI3BlcmNlbnQgb2YgYW5udWFsIHJlcG9ydHMgZ3JlYXRlciB0aGFuIDIwMCBjaGlsZGJpcnRoc1xuMTAwKnJvdW5kKHN1bShhbm51YWxfaG9zcGl0YWxfYmlydGhzX2RmW2FubnVhbF9ob3NwaXRhbF9iaXJ0aHNfZGYkYWJvdmVfMjAwID09IEZBTFNFLF1bW1wiYW5udWFsX2hvc3BpdGFsX2JpcnRoc1wiXV0pL3N1bShhbm51YWxfaG9zcGl0YWxfYmlydGhzX2RmW1snYW5udWFsX2hvc3BpdGFsX2JpcnRocyddXSksMykgI3BlcmNlbnQgb2Ygc3RhdGV3aWRlIGJpcnRocyBhdCBsb3ctY291bnQgaG9zcGl0YWxzXG5cbmBgYCJ9 -->
+<pre class="r"><code>
+annual_hospital_births_df &lt;- pregnancy_df %&gt;% 
+  filter(Measure.Name == &#39;Total Births&#39;, Hospital.Name != c(&#39;Statewide&#39;, &#39;Rest of State&#39;)) %&gt;% #select total statistics
+  select(Year, Hospital.Name, Hospital.County, Count) %&gt;%
+  group_by(Year, Hospital.Name) %&gt;%
+  mutate(annual_hospital_births = sum(Count)) %&gt;%
+  mutate(above_200 = annual_hospital_births &gt;200)  %&gt;%
+  arrange(annual_hospital_births)
+
+
+head(annual_hospital_births_df)
+100*round(mean(annual_hospital_births_df$above_200),3) #percent of annual reports greater than 200 childbirths
+100*round(sum(annual_hospital_births_df[annual_hospital_births_df$above_200 == FALSE,][[&quot;annual_hospital_births&quot;]])/sum(annual_hospital_births_df[[&#39;annual_hospital_births&#39;]]),3) #percent of statewide births at low-count hospitals
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Looking at the lowest years, it appears that the minimum reports sometimes is lower than 200. These cases represent less than 5% of total hospital reports and 0.2% of the number of births. One plausible explanation for these exceptions are hospitals no longer offering perinatal services.</p>
+</div>
+<div id="hospitals-by-county-region-and-borough" class="section level2">
+<h2>Hospitals by County, Region, and Borough</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5hbm51YWxfaG9zcGl0YWxfYmlydGhzX2RmICU+JVxuICBncm91cF9ieShIb3NwaXRhbC5Db3VudHkpICU+JVxuICBzdW1tYXJpemUobl9ob3NwaXRhbHMgPSBsZW5ndGgodW5pcXVlKEhvc3BpdGFsLk5hbWUpKSkgJT4lXG4gIGFycmFuZ2UoZGVzYyhuX2hvc3BpdGFscykpICU+JVxuICBnZ3Bsb3QoYWVzKG5faG9zcGl0YWxzKSkgK1xuICBnZW9tX2JhcigpICtcbiAgbGFicyh0aXRsZSA9ICdIaXN0b2dyYW0sIE51bWJlciBvZiBIb3NwaXRhbHMgaW4gZWFjaCBDb3VudHknLCB4ID0gJ051bWJlciBvZiBIb3NwaXRhbHMnLCB5ID0gJ0NvdW50JylcbiAgXG5cblxuXG5gYGAifQ== -->
+<pre class="r"><code>
+annual_hospital_births_df %&gt;%
+  group_by(Hospital.County) %&gt;%
+  summarize(n_hospitals = length(unique(Hospital.Name))) %&gt;%
+  arrange(desc(n_hospitals)) %&gt;%
+  ggplot(aes(n_hospitals)) +
+  geom_bar() +
+  labs(title = &#39;Histogram, Number of Hospitals in each County&#39;, x = &#39;Number of Hospitals&#39;, y = &#39;Count&#39;)
+  
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>One obstacle to drawing conclusions by location of the hospital is the majority of counties only include one or two hospitals offering perinatal services. One way to avoid this is to recode the dataset to include the 10 established regions of New York State. This will also remove the ‘rest of state’ and ‘Statewide’ statistics from the dataset as previously omitted.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJlZ25hbmN5X2RmJEhvc3BpdGFsLkNvdW50eSA8LSBzdHJfdG9fdGl0bGUocHJlZ25hbmN5X2RmJEhvc3BpdGFsLkNvdW50eSkgI3VuY2FwaXRhbGl6ZSBhbGwgYnV0IHRoZSBmaXJzdCBsZXR0ZXIgb2YgZWFjaCBjb3VudHlcblxucHJlZ25hbmN5X2ZpeF8xIDwtIHByZWduYW5jeV9kZiAlPiVcbiAgZmlsdGVyKEhvc3BpdGFsLkNvdW50eSAlaW4lIGMoJ0FsYmFueScsICdDb2x1bWJpYScsICdHcmVlbmUnLCAnUmVuc3NlbGFlcicsICdTYXJhdG9nYScsICdTY2hlbmVjdGFkeScsICdXYXJyZW4nLCAnV2FzaGluZ3RvbicpKSAlPiUgI2NyZWF0ZSBhIG5ldyAnUmVnaW9uJyBjb2x1bW5cbiAgbXV0YXRlKFJlZ2lvbiA9ICdDYXBpdGFsIFJlZ2lvbicpXG5wcmVnbmFuY3lfZml4XzIgPC0gcHJlZ25hbmN5X2RmICU+JVxuICBmaWx0ZXIoSG9zcGl0YWwuQ291bnR5ICVpbiUgYygnQ2F5dWdhJywgJ0NvcnRsYW5kJywgJ01hZGlzb24nLCAnT25vbmRhZ2EnLCAnT3N3ZWdvJykpICU+JVxuICBtdXRhdGUoUmVnaW9uID0gJ0NlbnRyYWwgTmV3IFlvcmsnKVxucHJlZ25hbmN5X2ZpeF8zIDwtIHByZWduYW5jeV9kZiAlPiVcbiAgZmlsdGVyKEhvc3BpdGFsLkNvdW50eSAlaW4lIGMoJ0dlbmVzc2VlJywgJ0xpdmluZ3N0b24nLCAnTW9ucm9lJywgJ09udGFyaW8nLCAnT3JsZWFucycsICdTZW5lY2EnLCAnV2F5bmUnLCAnV3lvbWluZycsICdZYXRlcycpKSAlPiVcbiAgbXV0YXRlKFJlZ2lvbiA9ICdGaW5nZXIgTGFrZXMnKVxucHJlZ25hbmN5X2ZpeF80IDwtIHByZWduYW5jeV9kZiAlPiVcbiAgZmlsdGVyKEhvc3BpdGFsLkNvdW50eSAlaW4lIGMoJ05hc3NhdScsICdTdWZmb2xrJykpICU+JVxuICBtdXRhdGUoUmVnaW9uID0gJ0xvbmcgSXNsYW5kJylcbnByZWduYW5jeV9maXhfNSA8LSBwcmVnbmFuY3lfZGYgJT4lXG4gIGZpbHRlcihIb3NwaXRhbC5Db3VudHkgJWluJSBjKCdEdWNoZXNzJywgJ09yYW5nZScsICdQdXRuYW0nLCAnUm9ja2xhbmQnLCAnU3VsbGl2YW4nLCAnVWxzdGVyJywgJ1dlc3RjaGVzdGVyJykpICU+JVxuICBtdXRhdGUoUmVnaW9uID0gJ01pZC1IdWRzb24nKVxucHJlZ25hbmN5X2ZpeF82IDwtIHByZWduYW5jeV9kZiAlPiVcbiAgZmlsdGVyKEhvc3BpdGFsLkNvdW50eSAlaW4lIGMoJ0Z1bHRvbicsICdIZXJraW1lcicsICdNb250Z29tZXJ5JywgJ09uZWlkYScsICdPdHNlZ28nLCAnU2Nob2hhcmllJykpICU+JVxuICBtdXRhdGUoUmVnaW9uID0gJ01vaGF3ayBWYWxsZXknKVxucHJlZ25hbmN5X2ZpeF83IDwtIHByZWduYW5jeV9kZiAlPiVcbiAgZmlsdGVyKEhvc3BpdGFsLkNvdW50eSAlaW4lIGMoJ0Jyb254JywgJ0tpbmdzJywgJ05ldyBZb3JrJywgJ1F1ZWVucycsICdSaWNobW9uZCcpKSAlPiVcbiAgbXV0YXRlKFJlZ2lvbiA9ICdOZXcgWW9yayBDaXR5JylcbnByZWduYW5jeV9maXhfOCA8LSBwcmVnbmFuY3lfZGYgJT4lXG4gIGZpbHRlcihIb3NwaXRhbC5Db3VudHkgJWluJSBjKCdDbGludG9uJywgJ0Vzc2V4JywgJ0ZyYW5rbGluJywgJ0hhbWlsdG9uJywgJ0plZmZlcnNvbicsICdMZXdpcycsICdTYWludCBMYXdyZW5jZScpKSAlPiVcbiAgbXV0YXRlKFJlZ2lvbiA9ICdOb3J0aCBDb3VudHJ5JylcbnByZWduYW5jeV9maXhfOSA8LSBwcmVnbmFuY3lfZGYgJT4lXG4gIGZpbHRlcihIb3NwaXRhbC5Db3VudHkgJWluJSBjKCdCcm9vbWUnLCAnQ2hlbXVuZycsICdDaGVuYW5nbycsICdEZWxhd2FyZScsICdTY2h1eWxlcicsICdTdGV1YmVuJywgJ1Rpb2dhJywgJ1RvbXBraW5zJykpICU+JVxuICBtdXRhdGUoUmVnaW9uID0gJ1NvdXRoZXJuIFRpZXInKVxucHJlZ25hbmN5X2ZpeF8xMCA8LSBwcmVnbmFuY3lfZGYgJT4lXG4gIGZpbHRlcihIb3NwaXRhbC5Db3VudHkgJWluJSBjKCdBbGxlZ2FueScsICdDYXR0YXJhdWd1cycsICdDaGF1dGF1cXVhJywgJ05pYWdyYScpKSAlPiVcbiAgbXV0YXRlKFJlZ2lvbiA9ICdXZXN0ZXJuIE5ldyBZb3JrJylcbnByZWduYW5jeV9maXggPC0gcmJpbmQocHJlZ25hbmN5X2ZpeF8xLCBwcmVnbmFuY3lfZml4XzIsIHByZWduYW5jeV9maXhfMywgcHJlZ25hbmN5X2ZpeF80LCBwcmVnbmFuY3lfZml4XzUsIHByZWduYW5jeV9maXhfNiwgcHJlZ25hbmN5X2ZpeF83LCBwcmVnbmFuY3lfZml4XzgsIHByZWduYW5jeV9maXhfOSwgcHJlZ25hbmN5X2ZpeF8xMCkgI2JpbmQgUmVnaW9uYWwgZGF0YWZyYW1lcyB0byBhIG5ldyBmaXhlZCBkYXRhZnJhbWVcblxuXG5cbmBgYCJ9 -->
+<pre class="r"><code>pregnancy_df$Hospital.County &lt;- str_to_title(pregnancy_df$Hospital.County) #uncapitalize all but the first letter of each county
+
+pregnancy_fix_1 &lt;- pregnancy_df %&gt;%
+  filter(Hospital.County %in% c(&#39;Albany&#39;, &#39;Columbia&#39;, &#39;Greene&#39;, &#39;Rensselaer&#39;, &#39;Saratoga&#39;, &#39;Schenectady&#39;, &#39;Warren&#39;, &#39;Washington&#39;)) %&gt;% #create a new &#39;Region&#39; column
+  mutate(Region = &#39;Capital Region&#39;)
+pregnancy_fix_2 &lt;- pregnancy_df %&gt;%
+  filter(Hospital.County %in% c(&#39;Cayuga&#39;, &#39;Cortland&#39;, &#39;Madison&#39;, &#39;Onondaga&#39;, &#39;Oswego&#39;)) %&gt;%
+  mutate(Region = &#39;Central New York&#39;)
+pregnancy_fix_3 &lt;- pregnancy_df %&gt;%
+  filter(Hospital.County %in% c(&#39;Genessee&#39;, &#39;Livingston&#39;, &#39;Monroe&#39;, &#39;Ontario&#39;, &#39;Orleans&#39;, &#39;Seneca&#39;, &#39;Wayne&#39;, &#39;Wyoming&#39;, &#39;Yates&#39;)) %&gt;%
+  mutate(Region = &#39;Finger Lakes&#39;)
+pregnancy_fix_4 &lt;- pregnancy_df %&gt;%
+  filter(Hospital.County %in% c(&#39;Nassau&#39;, &#39;Suffolk&#39;)) %&gt;%
+  mutate(Region = &#39;Long Island&#39;)
+pregnancy_fix_5 &lt;- pregnancy_df %&gt;%
+  filter(Hospital.County %in% c(&#39;Duchess&#39;, &#39;Orange&#39;, &#39;Putnam&#39;, &#39;Rockland&#39;, &#39;Sullivan&#39;, &#39;Ulster&#39;, &#39;Westchester&#39;)) %&gt;%
+  mutate(Region = &#39;Mid-Hudson&#39;)
+pregnancy_fix_6 &lt;- pregnancy_df %&gt;%
+  filter(Hospital.County %in% c(&#39;Fulton&#39;, &#39;Herkimer&#39;, &#39;Montgomery&#39;, &#39;Oneida&#39;, &#39;Otsego&#39;, &#39;Schoharie&#39;)) %&gt;%
+  mutate(Region = &#39;Mohawk Valley&#39;)
+pregnancy_fix_7 &lt;- pregnancy_df %&gt;%
+  filter(Hospital.County %in% c(&#39;Bronx&#39;, &#39;Kings&#39;, &#39;New York&#39;, &#39;Queens&#39;, &#39;Richmond&#39;)) %&gt;%
+  mutate(Region = &#39;New York City&#39;)
+pregnancy_fix_8 &lt;- pregnancy_df %&gt;%
+  filter(Hospital.County %in% c(&#39;Clinton&#39;, &#39;Essex&#39;, &#39;Franklin&#39;, &#39;Hamilton&#39;, &#39;Jefferson&#39;, &#39;Lewis&#39;, &#39;Saint Lawrence&#39;)) %&gt;%
+  mutate(Region = &#39;North Country&#39;)
+pregnancy_fix_9 &lt;- pregnancy_df %&gt;%
+  filter(Hospital.County %in% c(&#39;Broome&#39;, &#39;Chemung&#39;, &#39;Chenango&#39;, &#39;Delaware&#39;, &#39;Schuyler&#39;, &#39;Steuben&#39;, &#39;Tioga&#39;, &#39;Tompkins&#39;)) %&gt;%
+  mutate(Region = &#39;Southern Tier&#39;)
+pregnancy_fix_10 &lt;- pregnancy_df %&gt;%
+  filter(Hospital.County %in% c(&#39;Allegany&#39;, &#39;Cattaraugus&#39;, &#39;Chautauqua&#39;, &#39;Niagra&#39;)) %&gt;%
+  mutate(Region = &#39;Western New York&#39;)
+pregnancy_fix &lt;- rbind(pregnancy_fix_1, pregnancy_fix_2, pregnancy_fix_3, pregnancy_fix_4, pregnancy_fix_5, pregnancy_fix_6, pregnancy_fix_7, pregnancy_fix_8, pregnancy_fix_9, pregnancy_fix_10) #bind Regional dataframes to a new fixed dataframe
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5wcmVnbmFuY3lfZml4ICU+JVxuICBncm91cF9ieShSZWdpb24pICU+JVxuICBmaWx0ZXIoWWVhciA9PSAyMDE3LCBDYXRlZ29yeSA9PSAnQWxsIERlbGl2ZXJpZXMnKSAlPiVcbiAgc3VtbWFyaXplKG5faG9zcGl0YWxzID0gbGVuZ3RoKHVuaXF1ZShIb3NwaXRhbC5OYW1lKSkpICU+JVxuICBnZ3Bsb3QoYWVzKHggPSBSZWdpb24sIHkgPSBuX2hvc3BpdGFscykpICtcbiAgZ2VvbV9jb2woKSArXG4gIGNvb3JkX2ZsaXAoKSArXG4gIGxhYnModGl0bGUgPSAnTnVtYmVyIG9mIEhvc3BpdGFscyBwZXIgUmVnaW9uLCAyMDE3JywgeSA9ICdOdW1iZXIgb2YgSG9zcGl0YWxzJylcblxuXG5gYGAifQ== -->
+<pre class="r"><code>
+pregnancy_fix %&gt;%
+  group_by(Region) %&gt;%
+  filter(Year == 2017, Category == &#39;All Deliveries&#39;) %&gt;%
+  summarize(n_hospitals = length(unique(Hospital.Name))) %&gt;%
+  ggplot(aes(x = Region, y = n_hospitals)) +
+  geom_col() +
+  coord_flip() +
+  labs(title = &#39;Number of Hospitals per Region, 2017&#39;, y = &#39;Number of Hospitals&#39;)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5wcmVnbmFuY3lfZml4ICU+JVxuICBncm91cF9ieShIb3NwaXRhbC5Db3VudHkpICU+JVxuICBmaWx0ZXIoWWVhciA9PSAyMDE3LCBDYXRlZ29yeSA9PSAnQWxsIERlbGl2ZXJpZXMnLCBSZWdpb24gPT0gJ05ldyBZb3JrIENpdHknKSAlPiVcbiAgc3VtbWFyaXplKG5faG9zcGl0YWxzID0gbGVuZ3RoKHVuaXF1ZShIb3NwaXRhbC5OYW1lKSkpICU+JVxuICBnZ3Bsb3QoYWVzKHggPSBIb3NwaXRhbC5Db3VudHksIHkgPSBuX2hvc3BpdGFscykpICtcbiAgZ2VvbV9jb2woKSArXG4gIHNjYWxlX3lfY29udGludW91cyhicmVha3MgPSBjKDIsIDQsIDYsIDggLDEwLCAxMikpICtcbiAgY29vcmRfZmxpcCgpICtcbiAgbGFicyh0aXRsZSA9ICdOdW1iZXIgb2YgSG9zcGl0YWxzIHBlciBOWUMgQm9yb3VnaCwgMjAxNycsIHkgPSAnTnVtYmVyIG9mIEhvc3BpdGFscycsIHggPSAnQm9yb3VnaCcpIFxuXG5cblxuXG5gYGAifQ== -->
+<pre class="r"><code>
+pregnancy_fix %&gt;%
+  group_by(Hospital.County) %&gt;%
+  filter(Year == 2017, Category == &#39;All Deliveries&#39;, Region == &#39;New York City&#39;) %&gt;%
+  summarize(n_hospitals = length(unique(Hospital.Name))) %&gt;%
+  ggplot(aes(x = Hospital.County, y = n_hospitals)) +
+  geom_col() +
+  scale_y_continuous(breaks = c(2, 4, 6, 8 ,10, 12)) +
+  coord_flip() +
+  labs(title = &#39;Number of Hospitals per NYC Borough, 2017&#39;, y = &#39;Number of Hospitals&#39;, x = &#39;Borough&#39;) 
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Grouping by region offers a larger pool of hospitals to compare, although New York City is a clear outlier for the number of hospitals. Looking only at each NYC borough offers the insight that hospitals in the city are distributed between the five boroughs, although Staten Island is a cleaer minimum.</p>
+</div>
+<div id="birth-measures" class="section level2">
+<h2>Birth Measures</h2>
+<div id="where-are-being-born" class="section level3">
+<h3>Where are Being Born?</h3>
+<p>The immediate question for many is where are New York State’s babies being born? To answer this question initially, I’ll look at the raw totals, without consideration of existing population in the region.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5yZWdpb25hbF90b3RhbHMgPC0gcHJlZ25hbmN5X2ZpeCAlPiVcbiAgZmlsdGVyKE1lYXN1cmUuTmFtZSA9PSAnVG90YWwgQmlydGhzJykgJT4lICN1c2VmdWwgZGF0YWZyYW1lIHdpdGggYW5udWFsIGJpcnRoIHRvdGFscyBmb3IgZWFjaCByZWdpb25cbiAgc2VsZWN0KFllYXIsIFJlZ2lvbiwgQ291bnQpICU+JVxuICBncm91cF9ieShSZWdpb24sIFllYXIpICU+JVxuICBzdW1tYXJpemUodG90YWxfYmlydGhzID0gc3VtKENvdW50KSlcblxuXG5yZWdpb25hbF90b3RhbHMkUmVnaW9uIDwtIGZhY3RvcihyZWdpb25hbF90b3RhbHMkUmVnaW9uLCBvcmRlcmVkID0gVFJVRSwgbGV2ZWxzID0gYygnTmV3IFlvcmsgQ2l0eScsICdMb25nIElzbGFuZCcsICdNaWQtSHVkc29uJywgJ0ZpbmdlciBMYWtlcycsICdDYXBpdGFsIFJlZ2lvbicsICdDZW50cmFsIE5ldyBZb3JrJywgJ1NvdXRoZXJuIFRpZXInLCAnTW9oYXdrIFZhbGxleScsICdOb3J0aCBDb3VudHJ5JywgJ1dlc3Rlcm4gTmV3IFlvcmsnKSlcbiAgXG5yZWdpb25hbF90b3RhbHMgJT4lXG4gIGdncGxvdChhZXMoeCA9IFllYXIsIHkgPSB0b3RhbF9iaXJ0aHMsIGZpbGwgPSBSZWdpb24pKStcbiAgZ2VvbV9jb2woKSAgK1xuICBsYWJzKHRpdGxlID0gJ05ldyBZb3JrIFN0YXRlIEJpcnRocyBieSBSZWdpb24sIDIwMDggLSAyMDE3JywgeSA9ICcjIG9mIEJpcnRocycpICtcbiAgc2NhbGVfeF9jb250aW51b3VzKGJyZWFrcyA9IGMoMjAwOCwyMDEwLDIwMTIsMjAxNCwyMDE2LDIwMTgpKSBcblxuYGBgIn0= -->
+<pre class="r"><code>
+regional_totals &lt;- pregnancy_fix %&gt;%
+  filter(Measure.Name == &#39;Total Births&#39;) %&gt;% #useful dataframe with annual birth totals for each region
+  select(Year, Region, Count) %&gt;%
+  group_by(Region, Year) %&gt;%
+  summarize(total_births = sum(Count))
+
+
+regional_totals$Region &lt;- factor(regional_totals$Region, ordered = TRUE, levels = c(&#39;New York City&#39;, &#39;Long Island&#39;, &#39;Mid-Hudson&#39;, &#39;Finger Lakes&#39;, &#39;Capital Region&#39;, &#39;Central New York&#39;, &#39;Southern Tier&#39;, &#39;Mohawk Valley&#39;, &#39;North Country&#39;, &#39;Western New York&#39;))
+  
+regional_totals %&gt;%
+  ggplot(aes(x = Year, y = total_births, fill = Region))+
+  geom_col()  +
+  labs(title = &#39;New York State Births by Region, 2008 - 2017&#39;, y = &#39;# of Births&#39;) +
+  scale_x_continuous(breaks = c(2008,2010,2012,2014,2016,2018)) 
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Unfortunately, this treatment of total births does not offer very much insight into any regional differences. However, it is notable that births overall appear to be decreasing. To better understand the birth rate, I’ll be using a second dataframe using NY state census projections to estimate population.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5ueV9wb3AgPC0gcmVhZC5jc3YoJ2h0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9oaWxsdDUvREFUQTYwOC9tYWluL0FubnVhbF9Qb3B1bGF0aW9uX0VzdGltYXRlc19mb3JfTmV3X1lvcmtfU3RhdGVfYW5kX0NvdW50aWVzX19CZWdpbm5pbmdfMTk3MCcpICNsb2FkIGNlbnN1cyBkYXRhXG5cbm55X3BvcF8wOF8wOSA8LSBueV9wb3AgJT4lXG4gIGZpbHRlcihQcm9ncmFtLlR5cGUgPT0gJ0ludGVyY2Vuc2FsIFBvcHVsYXRpb24gRXN0aW1hdGUnICYgKFllYXIgPT0gMjAwOCB8IFllYXIgPT0gMjAwOSkpICNpbnRlcmNlbnNhbCBpcyB0aGUgbW9zdCBhY2N1cmF0ZSBwcm9qZWN0aW9uIG9mIHBvcHVsYXRpb24sIGFuZCBjb25zaWRlcnMgdGhlIDIwMDAgYW5kIDIwMTAgY2Vuc3VzIHJlc3VsdHNcblxubnlfcG9wXzEwIDwtIG55X3BvcCAlPiVcbiAgZmlsdGVyKFByb2dyYW0uVHlwZSA9PSAnQ2Vuc3VzIEJhc2UgUG9wdWxhdGlvbicgJiBZZWFyID09IDIwMTApICNhY3R1YWwgMjAxMCBjZW5zdXMgcmVzdWx0c1xuICBcbm55X3BvcF8xMTE3IDwtIG55X3BvcCAlPiVcbiAgZmlsdGVyKFByb2dyYW0uVHlwZSA9PSAnUG9zdGNlbnNhbCBQb3B1bGF0aW9uIEVzdGltYXRlJyAmIFllYXIgPiAyMDEwICYgWWVhciA8IDIwMTgpICNlc3RpbWF0aW9uIG9mIHBvcHVsYXRpb24gZnJvbSAyMDEwIGNlbnN1c1xuXG5ueV9wb3BfMDhfMTcgPC0gcmJpbmQobnlfcG9wXzA4XzA5LCBueV9wb3BfMTAsIG55X3BvcF8xMTE3KVxuXG5cbm55X3BvcF8wOF8xNyAlPiVcbiAgZmlsdGVyKEdlb2dyYXBoeSAhPSAnTmV3IFlvcmsgU3RhdGUnKSAlPiVcbiAgZ3JvdXBfYnkoWWVhcikgJT4lXG4gIHN1bW1hcml6ZSh0b3RhbF9wb3AgPSBzdW0oUG9wdWxhdGlvbikpICU+JVxuICBnZ3Bsb3QoYWVzKHggPSBZZWFyLCB5ID10b3RhbF9wb3ApKSArXG4gIGdlb21fcG9pbnQoKSArXG4gIGdlb21fbGluZSgpICtcbiAgbGFicyh0aXRsZSA9ICdOZXcgWW9yayBTdGF0ZSBQb3B1bGF0aW9uLCAyMDA4IC0gMjAxNycsIHkgPSAnRXN0aW1hdGVkIFBvcHVsYXRpb24nKSArXG4gIHNjYWxlX3hfY29udGludW91cyhicmVha3MgPSBjKDIwMDgsMjAxMCwyMDEyLDIwMTQsMjAxNiwyMDE4KSkgK1xuICB5bGltKGMoMTgwMDAwMDAsMjEwMDAwMDApKVxuXG5gYGAifQ== -->
+<pre class="r"><code>
+ny_pop &lt;- read.csv(&#39;https://raw.githubusercontent.com/hillt5/DATA608/main/Annual_Population_Estimates_for_New_York_State_and_Counties__Beginning_1970&#39;) #load census data
+
+ny_pop_08_09 &lt;- ny_pop %&gt;%
+  filter(Program.Type == &#39;Intercensal Population Estimate&#39; &amp; (Year == 2008 | Year == 2009)) #intercensal is the most accurate projection of population, and considers the 2000 and 2010 census results
+
+ny_pop_10 &lt;- ny_pop %&gt;%
+  filter(Program.Type == &#39;Census Base Population&#39; &amp; Year == 2010) #actual 2010 census results
+  
+ny_pop_1117 &lt;- ny_pop %&gt;%
+  filter(Program.Type == &#39;Postcensal Population Estimate&#39; &amp; Year &gt; 2010 &amp; Year &lt; 2018) #estimation of population from 2010 census
+
+ny_pop_08_17 &lt;- rbind(ny_pop_08_09, ny_pop_10, ny_pop_1117)
+
+
+ny_pop_08_17 %&gt;%
+  filter(Geography != &#39;New York State&#39;) %&gt;%
+  group_by(Year) %&gt;%
+  summarize(total_pop = sum(Population)) %&gt;%
+  ggplot(aes(x = Year, y =total_pop)) +
+  geom_point() +
+  geom_line() +
+  labs(title = &#39;New York State Population, 2008 - 2017&#39;, y = &#39;Estimated Population&#39;) +
+  scale_x_continuous(breaks = c(2008,2010,2012,2014,2016,2018)) +
+  ylim(c(18000000,21000000))
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>It appears that total population growth has also decreased during this period, with state population supposedly reaching its maximum in 2015. Next, lets use these estimates to get the per capital birth rate.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG4jIyByZWNvZGluZyB0aGUgcG9wdWxhdGlvbiBkYXRhIHVzaW5nIHRoZSBzYW1lIG1ldGhvZCBhcyB1c2VkIGluIHRoZSBmaXJzdCBkYXRhZnJhbWVcbm55X3BvcF8wOF8xN18xIDwtIG55X3BvcF8wOF8xNyAlPiVcbiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ0FsYmFueScsICdDb2x1bWJpYScsICdHcmVlbmUnLCAnUmVuc3NlbGFlcicsICdTYXJhdG9nYScsICdTY2hlbmVjdGFkeScsICdXYXJyZW4nLCAnV2FzaGluZ3RvbicpKSAlPiVcbiAgbXV0YXRlKFJlZ2lvbiA9ICdDYXBpdGFsIFJlZ2lvbicpXG5ueV9wb3BfMDhfMTdfMiA8LSBueV9wb3BfMDhfMTcgJT4lXG4gIGZpbHRlcihHZW9ncmFwaHkgJWluJSBjKCdDYXl1Z2EnLCAnQ29ydGxhbmQnLCAnTWFkaXNvbicsICdPbm9uZGFnYScsICdPc3dlZ28nKSkgJT4lXG4gIG11dGF0ZShSZWdpb24gPSAnQ2VudHJhbCBOZXcgWW9yaycpXG5ueV9wb3BfMDhfMTdfMyA8LSBueV9wb3BfMDhfMTcgJT4lXG4gIGZpbHRlcihHZW9ncmFwaHkgJWluJSBjKCdHZW5lc3NlZScsICdMaXZpbmdzdG9uJywgJ01vbnJvZScsICdPbnRhcmlvJywgJ09ybGVhbnMnLCAnU2VuZWNhJywgJ1dheW5lJywgJ1d5b21pbmcnLCAnWWF0ZXMnKSkgJT4lXG4gIG11dGF0ZShSZWdpb24gPSAnRmluZ2VyIExha2VzJylcbm55X3BvcF8wOF8xN180IDwtIG55X3BvcF8wOF8xNyAlPiVcbiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ05hc3NhdScsICdTdWZmb2xrJykpICU+JVxuICBtdXRhdGUoUmVnaW9uID0gJ0xvbmcgSXNsYW5kJylcbm55X3BvcF8wOF8xN181IDwtIG55X3BvcF8wOF8xNyAlPiVcbiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ0R1Y2hlc3MnLCAnT3JhbmdlJywgJ1B1dG5hbScsICdSb2NrbGFuZCcsICdTdWxsaXZhbicsICdVbHN0ZXInLCAnV2VzdGNoZXN0ZXInKSkgJT4lXG4gIG11dGF0ZShSZWdpb24gPSAnTWlkLUh1ZHNvbicpXG5ueV9wb3BfMDhfMTdfNiA8LSBueV9wb3BfMDhfMTcgJT4lXG4gIGZpbHRlcihHZW9ncmFwaHkgJWluJSBjKCdGdWx0b24nLCAnSGVya2ltZXInLCAnTW9udGdvbWVyeScsICdPbmVpZGEnLCAnT3RzZWdvJywgJ1NjaG9oYXJpZScpKSAlPiVcbiAgbXV0YXRlKFJlZ2lvbiA9ICdNb2hhd2sgVmFsbGV5Jylcbm55X3BvcF8wOF8xN183IDwtIG55X3BvcF8wOF8xNyAlPiVcbiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ0Jyb254JywgJ0tpbmdzJywgJ05ldyBZb3JrJywgJ1F1ZWVucycsICdSaWNobW9uZCcpKSAlPiVcbiAgbXV0YXRlKFJlZ2lvbiA9ICdOZXcgWW9yayBDaXR5Jylcbm55X3BvcF8wOF8xN184IDwtIG55X3BvcF8wOF8xNyAlPiVcbiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ0NsaW50b24nLCAnRXNzZXgnLCAnRnJhbmtsaW4nLCAnSGFtaWx0b24nLCAnSmVmZmVyc29uJywgJ0xld2lzJywgJ1NhaW50IExhd3JlbmNlJykpICU+JVxuICBtdXRhdGUoUmVnaW9uID0gJ05vcnRoIENvdW50cnknKVxubnlfcG9wXzA4XzE3XzkgPC0gbnlfcG9wXzA4XzE3ICU+JVxuICBmaWx0ZXIoR2VvZ3JhcGh5ICVpbiUgYygnQnJvb21lJywgJ0NoZW11bmcnLCAnQ2hlbmFuZ28nLCAnRGVsYXdhcmUnLCAnU2NodXlsZXInLCAnU3RldWJlbicsICdUaW9nYScsICdUb21wa2lucycpKSAlPiVcbiAgbXV0YXRlKFJlZ2lvbiA9ICdTb3V0aGVybiBUaWVyJylcbm55X3BvcF8wOF8xN18xMCA8LSBueV9wb3AgJT4lXG4gIGZpbHRlcihHZW9ncmFwaHkgJWluJSBjKCdBbGxlZ2FueScsICdDYXR0YXJhdWd1cycsICdDaGF1dGF1cXVhJywgJ05pYWdyYScpKSAlPiVcbiAgbXV0YXRlKFJlZ2lvbiA9ICdXZXN0ZXJuIE5ldyBZb3JrJylcblxubnlfcG9wX2ZpeCA8LSByYmluZChueV9wb3BfMDhfMTdfMSwgbnlfcG9wXzA4XzE3XzIsIG55X3BvcF8wOF8xN18zLCBueV9wb3BfMDhfMTdfNCwgbnlfcG9wXzA4XzE3XzUsIG55X3BvcF8wOF8xN182LCBueV9wb3BfMDhfMTdfNywgbnlfcG9wXzA4XzE3XzgsIG55X3BvcF8wOF8xN185LCBueV9wb3BfMDhfMTdfMTApXG5cbmBgYCJ9 -->
+<pre class="r"><code>
+## recoding the population data using the same method as used in the first dataframe
+ny_pop_08_17_1 &lt;- ny_pop_08_17 %&gt;%
+  filter(Geography %in% c(&#39;Albany&#39;, &#39;Columbia&#39;, &#39;Greene&#39;, &#39;Rensselaer&#39;, &#39;Saratoga&#39;, &#39;Schenectady&#39;, &#39;Warren&#39;, &#39;Washington&#39;)) %&gt;%
+  mutate(Region = &#39;Capital Region&#39;)
+ny_pop_08_17_2 &lt;- ny_pop_08_17 %&gt;%
+  filter(Geography %in% c(&#39;Cayuga&#39;, &#39;Cortland&#39;, &#39;Madison&#39;, &#39;Onondaga&#39;, &#39;Oswego&#39;)) %&gt;%
+  mutate(Region = &#39;Central New York&#39;)
+ny_pop_08_17_3 &lt;- ny_pop_08_17 %&gt;%
+  filter(Geography %in% c(&#39;Genessee&#39;, &#39;Livingston&#39;, &#39;Monroe&#39;, &#39;Ontario&#39;, &#39;Orleans&#39;, &#39;Seneca&#39;, &#39;Wayne&#39;, &#39;Wyoming&#39;, &#39;Yates&#39;)) %&gt;%
+  mutate(Region = &#39;Finger Lakes&#39;)
+ny_pop_08_17_4 &lt;- ny_pop_08_17 %&gt;%
+  filter(Geography %in% c(&#39;Nassau&#39;, &#39;Suffolk&#39;)) %&gt;%
+  mutate(Region = &#39;Long Island&#39;)
+ny_pop_08_17_5 &lt;- ny_pop_08_17 %&gt;%
+  filter(Geography %in% c(&#39;Duchess&#39;, &#39;Orange&#39;, &#39;Putnam&#39;, &#39;Rockland&#39;, &#39;Sullivan&#39;, &#39;Ulster&#39;, &#39;Westchester&#39;)) %&gt;%
+  mutate(Region = &#39;Mid-Hudson&#39;)
+ny_pop_08_17_6 &lt;- ny_pop_08_17 %&gt;%
+  filter(Geography %in% c(&#39;Fulton&#39;, &#39;Herkimer&#39;, &#39;Montgomery&#39;, &#39;Oneida&#39;, &#39;Otsego&#39;, &#39;Schoharie&#39;)) %&gt;%
+  mutate(Region = &#39;Mohawk Valley&#39;)
+ny_pop_08_17_7 &lt;- ny_pop_08_17 %&gt;%
+  filter(Geography %in% c(&#39;Bronx&#39;, &#39;Kings&#39;, &#39;New York&#39;, &#39;Queens&#39;, &#39;Richmond&#39;)) %&gt;%
+  mutate(Region = &#39;New York City&#39;)
+ny_pop_08_17_8 &lt;- ny_pop_08_17 %&gt;%
+  filter(Geography %in% c(&#39;Clinton&#39;, &#39;Essex&#39;, &#39;Franklin&#39;, &#39;Hamilton&#39;, &#39;Jefferson&#39;, &#39;Lewis&#39;, &#39;Saint Lawrence&#39;)) %&gt;%
+  mutate(Region = &#39;North Country&#39;)
+ny_pop_08_17_9 &lt;- ny_pop_08_17 %&gt;%
+  filter(Geography %in% c(&#39;Broome&#39;, &#39;Chemung&#39;, &#39;Chenango&#39;, &#39;Delaware&#39;, &#39;Schuyler&#39;, &#39;Steuben&#39;, &#39;Tioga&#39;, &#39;Tompkins&#39;)) %&gt;%
+  mutate(Region = &#39;Southern Tier&#39;)
+ny_pop_08_17_10 &lt;- ny_pop %&gt;%
+  filter(Geography %in% c(&#39;Allegany&#39;, &#39;Cattaraugus&#39;, &#39;Chautauqua&#39;, &#39;Niagra&#39;)) %&gt;%
+  mutate(Region = &#39;Western New York&#39;)
+
+ny_pop_fix &lt;- rbind(ny_pop_08_17_1, ny_pop_08_17_2, ny_pop_08_17_3, ny_pop_08_17_4, ny_pop_08_17_5, ny_pop_08_17_6, ny_pop_08_17_7, ny_pop_08_17_8, ny_pop_08_17_9, ny_pop_08_17_10)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5cbnJlZ2lvbl9wb3AgPC0gbnlfcG9wX2ZpeCAlPiVcbiAgZmlsdGVyKFllYXIgJWluJSBjKDIwMDg6MjAxNykpICAlPiVcbiAgZ3JvdXBfYnkoUmVnaW9uLCBZZWFyKSAlPiVcbiAgc3VtbWFyaXplKHJlZ2lvbl9wb3B1bGF0aW9uID0gc3VtKFBvcHVsYXRpb24pKVxuXG5yZWdpb25fcG9wJFJlZ2lvbiA8LSBmYWN0b3IocmVnaW9uX3BvcCRSZWdpb24sIG9yZGVyZWQgPSBUUlVFLCBsZXZlbHMgPSBjKCdOZXcgWW9yayBDaXR5JywgJ0xvbmcgSXNsYW5kJywgJ01pZC1IdWRzb24nLCAnRmluZ2VyIExha2VzJywgJ0NhcGl0YWwgUmVnaW9uJywgJ0NlbnRyYWwgTmV3IFlvcmsnLCAnU291dGhlcm4gVGllcicsICdNb2hhd2sgVmFsbGV5JywgJ05vcnRoIENvdW50cnknLCAnV2VzdGVybiBOZXcgWW9yaycpKVxuI3JlZmFjdG9yIGJ5IHBvcHVsYXRpb24gc2l6ZVxuXG5cbmBgYCJ9 -->
+<pre class="r"><code>
+
+region_pop &lt;- ny_pop_fix %&gt;%
+  filter(Year %in% c(2008:2017))  %&gt;%
+  group_by(Region, Year) %&gt;%
+  summarize(region_population = sum(Population))
+
+region_pop$Region &lt;- factor(region_pop$Region, ordered = TRUE, levels = c(&#39;New York City&#39;, &#39;Long Island&#39;, &#39;Mid-Hudson&#39;, &#39;Finger Lakes&#39;, &#39;Capital Region&#39;, &#39;Central New York&#39;, &#39;Southern Tier&#39;, &#39;Mohawk Valley&#39;, &#39;North Country&#39;, &#39;Western New York&#39;))
+#refactor by population size
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5cbnJlZ2lvbmFsX3Blcl9jYXBpdGEgPC0gY2JpbmQocmVnaW9uYWxfdG90YWxzLCByZWdpb25fcG9wWywzXSkgJT4lXG4gIG11dGF0ZShiaXJ0aHNfcGVyX2NhcGl0YSA9IDEwMDAqdG90YWxfYmlydGhzL3JlZ2lvbl9wb3B1bGF0aW9uKSAjYmlydGhzIHBlciAxMDAwIHBvcHVsYXRpb25cblxucmVnaW9uYWxfcGVyX2NhcGl0YSRSZWdpb24gPC0gYXMuY2hhcmFjdGVyKHJlZ2lvbmFsX3Blcl9jYXBpdGEkUmVnaW9uKVxuXG5yZWdpb25hbF9wZXJfY2FwaXRhICU+JVxuICBmaWx0ZXIoYmlydGhzX3Blcl9jYXBpdGEgPiA1KSAlPiUgIyBvbWl0dGVkIGEgc2luZ2xlIHZhbHVlIGZvciBXZXN0ZXJuIE5ZIDIwMTAgYmVjYXVzZSBvZiBvdXRsaWVyIGNlbnN1cyB2YWx1ZVxuICBnZ3Bsb3QoYWVzKHggPSBZZWFyLCB5ID0gYmlydGhzX3Blcl9jYXBpdGEsIGNvbCA9IFJlZ2lvbikpICtcbiAgZ2VvbV9wb2ludCgpICtcbiAgZ2VvbV9saW5lKCkgK1xuICBsYWJzKHRpdGxlID0gJ05ldyBZb3JrIFN0YXRlIEJpcnRoIFJhdGUgYnkgUmVnaW9uLCAyMDA4IC0gMjAxNycsIHkgPSAnQmlydGhzIHBlciAxLDAwMCBQb3B1bGF0aW9uJykgK1xuICBzY2FsZV94X2NvbnRpbnVvdXMoYnJlYWtzID0gYygyMDA4LDIwMTAsMjAxMiwyMDE0LDIwMTYsMjAxOCkpXG5cbnByZWduYW5jeV9maXggJT4lXG4gIGZpbHRlcihSZWdpb24gPT0gJ05vcnRoIENvdW50cnknLCBZZWFyID09IDIwMTcsIE1lYXN1cmUuTmFtZSA9PSAnVG90YWwgQmlydGhzJykgJT4lXG4gIHNlbGVjdChIb3NwaXRhbC5OYW1lKSBcblxuYGBgIn0= -->
+<pre class="r"><code>
+
+regional_per_capita &lt;- cbind(regional_totals, region_pop[,3]) %&gt;%
+  mutate(births_per_capita = 1000*total_births/region_population) #births per 1000 population
+
+regional_per_capita$Region &lt;- as.character(regional_per_capita$Region)
+
+regional_per_capita %&gt;%
+  filter(births_per_capita &gt; 5) %&gt;% # omitted a single value for Western NY 2010 because of outlier census value
+  ggplot(aes(x = Year, y = births_per_capita, col = Region)) +
+  geom_point() +
+  geom_line() +
+  labs(title = &#39;New York State Birth Rate by Region, 2008 - 2017&#39;, y = &#39;Births per 1,000 Population&#39;) +
+  scale_x_continuous(breaks = c(2008,2010,2012,2014,2016,2018))
+
+pregnancy_fix %&gt;%
+  filter(Region == &#39;North Country&#39;, Year == 2017, Measure.Name == &#39;Total Births&#39;) %&gt;%
+  select(Hospital.Name) 
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>After considering the underlying population of each region, New York City remains the area with the largest birth rate, while the lowest population regions had some of the lowest birth rates. The one surprisin result is the North Country region having a middle of the pack birth rate.The reason for this is not obvious, although geographically this region is very large with low poulation density and likely has plenty of room for population growth. Another theory worth considering is availability of non-hospital birthing options. Rural areas tend to attract fewer medical professional like obstetrician-gynecologysts (OB/GYN’s), so it’s a drawback of these data that out-of-hospital births are not estimated. We will look in the next section at the presence of mid-level practitioners in these areas.</p>
+<p>Also notable is stagnant or decreasing birth rates across the whole state. This treatment of the data supports the conclusion that babies are being born where the most people live, namely New York City. Also from our understanding of the number of hospitals, this area has some of the highest density of facilities and may attract families from other regions for advanced care or induced births.</p>
+</div>
+<div id="childbirth-and-midwives" class="section level3">
+<h3>Childbirth and Midwives</h3>
+<p>Midwives are specialized healthcare professionals whose scope of practice includes prenatal and perinatal care. They are able to practice independently while overseeing low-risk pregnancies and more complicated presentations like breech births, but can also collaboratively with obstetricians and nurses to assisted in complex births. This is a relevant statistic when choosing a hospital because it may determine which healthcare professional will be overseeing a delivery. Families may prefer to work with a midwife versus another mid-level practitioner or medical doctor based on their preferred type of care. The rise of midwifery as an alternative to OB/GYN doctors may also indicate greater scarcity of doctors offering perinatal care relative to demand, as midwives require fewer years of training.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5td19kZiA8LSBwcmVnbmFuY3lfZml4ICU+JVxuICBmaWx0ZXIoTWVhc3VyZS5OYW1lID09ICdBdHRlbmRlZCBieSBMaWNlbnNlZCBNaWR3aWZlJykgJT4lICNyZWdpb25hbCB0b3RhbHMgb2YgbWlkd2lmZSBiaXJ0aHNcbiAgc2VsZWN0KFllYXIsIFJlZ2lvbiwgQ291bnQpICU+JVxuICBncm91cF9ieShSZWdpb24sIFllYXIpICU+JVxuICBzdW1tYXJpemUobXdfYmlydGhzID0gc3VtKENvdW50KSlcblxuXG5cbm1pZHdpdmVzX3dpZGUgPC0gY2JpbmQobXdfZGYsIHJlZ2lvbmFsX3RvdGFsc1ssM10pICNiaW5kIHRoZSB0b3RhbHMgdG8gbWlkd2lmZSBkYXRhZnJhbWUsIHllYXJzIGFuZCByZWdpb25zIGFyZSBpbiB0aGUgc2FtZSBvcmRlclxuXG5taWR3aXZlc193aWRlICU+JVxuICBtdXRhdGUocGVyY2VudF9iaXJ0aHMgPSAxMDAqcm91bmQobXdfYmlydGhzL3RvdGFsX2JpcnRocywzKSkgJT4lXG4gIGdncGxvdChhZXMoeCA9IFllYXIsIHkgPSBwZXJjZW50X2JpcnRocywgY29sID0gUmVnaW9uKSkrXG4gIGdlb21fbGluZSgpICtcbiAgZ2VvbV9wb2ludCgpICtcbiAgbGFicyh0aXRsZSA9ICdQZXJjZW50IG9mIEJpcnRocyBBY2NvbXBhbmllZCBieSBNaWR3aXZlcywgMjAwOCAtIDIwMTcnLCB5ID0gJyUgb2YgQmlydGhzJykgK1xuICBzY2FsZV94X2NvbnRpbnVvdXMoYnJlYWtzID0gYygyMDA4LDIwMTAsMjAxMiwyMDE0LDIwMTYsMjAxOCkpXG5cblxuXG5gYGAifQ== -->
+<pre class="r"><code>
+mw_df &lt;- pregnancy_fix %&gt;%
+  filter(Measure.Name == &#39;Attended by Licensed Midwife&#39;) %&gt;% #regional totals of midwife births
+  select(Year, Region, Count) %&gt;%
+  group_by(Region, Year) %&gt;%
+  summarize(mw_births = sum(Count))
+
+
+
+midwives_wide &lt;- cbind(mw_df, regional_totals[,3]) #bind the totals to midwife dataframe, years and regions are in the same order
+
+midwives_wide %&gt;%
+  mutate(percent_births = 100*round(mw_births/total_births,3)) %&gt;%
+  ggplot(aes(x = Year, y = percent_births, col = Region))+
+  geom_line() +
+  geom_point() +
+  labs(title = &#39;Percent of Births Accompanied by Midwives, 2008 - 2017&#39;, y = &#39;% of Births&#39;) +
+  scale_x_continuous(breaks = c(2008,2010,2012,2014,2016,2018))
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Over time, it appears the majority of regions stayed relatively constant. The clearest exception is Western New York whose percent nearly doubled over a 10 year period. It’s also notable that there’s a lot of variabilty between regions, with Long Island and NYC having little representation of midwives, and the more rural areas showing higher representation. This may be related to the suggestion in the previous seciton that OB/GYN’s prefer to practice in urban areas, while midwives are addressing practitioner shortages elsewhere.</p>
+</div>
+<div id="cesarian-births" class="section level3">
+<h3>Cesarian Births</h3>
+<p>Another piece of conventional wisdom to examine is the rise of Cesarian births or so-called C-sections. C-sections are the alternative to vaginal deliveries and are performed by accessing the uterus through an incision in the mother’s uteru, while under general or local anesthesia. There are a variety of reasons why C-sections would be necessary depending on the orientation of the child or obstruction in the birth canal, multiple pregnancies to be delivered, or emergency situations. C-sections are also done upon request, with the trade-off of shorter induction period versus longer recovery period.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5jc19kZiA8LSBwcmVnbmFuY3lfZml4ICU+JVxuICBmaWx0ZXIoTWVhc3VyZS5OYW1lID09ICdDZXNhcmVhbiBCaXJ0aHMnKSAlPiUgI3JlZ2lvbmFsIHRvdGFscyBvZiBtaWR3aWZlIGJpcnRoc1xuICBzZWxlY3QoWWVhciwgUmVnaW9uLCBDb3VudCkgJT4lXG4gIGdyb3VwX2J5KFllYXIpICU+JVxuICBzdW1tYXJpemUoY3NfYmlydGhzID0gc3VtKENvdW50KSlcblxueWVhcmx5X3RvdGFscyA8LSByZWdpb25hbF90b3RhbHMgJT4lXG4gIGdyb3VwX2J5KFllYXIpICU+JVxuICBzdW1tYXJpemUoeWVhcmx5X3RvdGFsID0gc3VtKHRvdGFsX2JpcnRocykpXG55ZWFybHlfdG90YWxzXG5cbmNzX3dpZGUgPC0gY2JpbmQoY3NfZGYsIHllYXJseV90b3RhbHNbLDJdKSAjYmluZCB0aGUgeWVhcmx5IHRvdGFscyB0byBjZXNhcmVhbiBiaXJ0aHNcblxuY3Nfd2lkZSAlPiVcbiAgbXV0YXRlKHBlcmNlbnRfY3NfYmlydGhzID0gMTAwKnJvdW5kKGNzX2JpcnRocy95ZWFybHlfdG90YWwsMykpICU+JVxuICBnZ3Bsb3QoYWVzKHggPSBZZWFyLCB5ID0gcGVyY2VudF9jc19iaXJ0aHMpKStcbiAgZ2VvbV9saW5lKCkgK1xuICBnZW9tX3BvaW50KCkgK1xuICB5bGltKGMoMjcsNDIpKSArXG4gIGxhYnModGl0bGUgPSAnUGVyY2VudCBvZiBCaXJ0aHMgdmlhIENlc2FyaWFuIERlbGl2ZXJ5LCAyMDA4IC0gMjAxNycsIHkgPSAnJSBvZiBCaXJ0aHMnKSArXG4gIHNjYWxlX3hfY29udGludW91cyhicmVha3MgPSBjKDIwMDgsMjAxMCwyMDEyLDIwMTQsMjAxNiwyMDE4KSlcblxuXG5gYGAifQ== -->
+<pre class="r"><code>
+cs_df &lt;- pregnancy_fix %&gt;%
+  filter(Measure.Name == &#39;Cesarean Births&#39;) %&gt;% #regional totals of midwife births
+  select(Year, Region, Count) %&gt;%
+  group_by(Year) %&gt;%
+  summarize(cs_births = sum(Count))
+
+yearly_totals &lt;- regional_totals %&gt;%
+  group_by(Year) %&gt;%
+  summarize(yearly_total = sum(total_births))
+yearly_totals
+
+cs_wide &lt;- cbind(cs_df, yearly_totals[,2]) #bind the yearly totals to cesarean births
+
+cs_wide %&gt;%
+  mutate(percent_cs_births = 100*round(cs_births/yearly_total,3)) %&gt;%
+  ggplot(aes(x = Year, y = percent_cs_births))+
+  geom_line() +
+  geom_point() +
+  ylim(c(27,42)) +
+  labs(title = &#39;Percent of Births via Cesarian Delivery, 2008 - 2017&#39;, y = &#39;% of Births&#39;) +
+  scale_x_continuous(breaks = c(2008,2010,2012,2014,2016,2018))
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>During this period of time, there’s no indication that the proportion of Cesarean births increased.</p>
+</div>
+</div>
+<div id="perinatal-birthing-center-designation" class="section level2">
+<h2>Perinatal Birthing Center Designation</h2>
+<p>In addition to state-level concerns, identification of a birthing center and perinatal care is also a nationwide concern. The American Academy of Pediatrics and American College of Obstetricians and Gynecologists outline a regional organization of perinatal care, with four levels of intensifying facility care. A level 1 facility provides care for the lowest risk births, while levels 2,3, and regional centers offer greater support services during childbirth, as well as operate neonatal intensive care units (NICUs). Perinatal care has also entered the public sphere as a handful of celebrities have reported complications during childbirth, as well as efforts to document maternal harm in ProPublica’s _ Lost Mothers_ series.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5ueV9iYyA8LSByZWFkLmNzdignaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2hpbGx0NS9EQVRBNjA4L21haW4vRmluYWwlMjBQcm9qZWN0L3BlcmluYXRhbF9jZW50ZXJzJylcblxuXG5gYGAifQ== -->
+<pre class="r"><code>
+ny_bc &lt;- read.csv(&#39;https://raw.githubusercontent.com/hillt5/DATA608/main/Final%20Project/perinatal_centers&#39;)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>The dataframe available for NY state also gives the exact location via latitude and longitude for each hospital, as well as the unique identifier that each licensed healthcare facility in New York has.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5ueV9iY19jYXAgPC0gbnlfYmMgJT4lXG4gIGZpbHRlcihDb3VudHkgJWluJSBjKCdBTEJBTlknICwgJ0NPTFVNQklBJyAsICdHUkVFTkUnLCAnUkVOU1NFTEFFUicsICdTQVJBVE9HQScsICdTQ0hFTkVDVEFEWScsICdXQVJSRU4nLCAnV0FTSElOR1RPTicpKSAlPiVcbiAgbXV0YXRlKFJlZ2lvbiA9ICdDYXBpdGFsIFJlZ2lvbicpXG5ueV9iY18xIDwtIG55X2JjICU+JVxuICBmaWx0ZXIoQ291bnR5ICVpbiUgYygnQWxiYW55JywgJ0NvbHVtYmlhJywgJ0dyZWVuZScsICdSZW5zc2VsYWVyJywgJ1NhcmF0b2dhJywgJ1NjaGVuZWN0YWR5JywgJ1dhcnJlbicsICdXYXNoaW5ndG9uJykpICU+JVxuICBtdXRhdGUoUmVnaW9uID0gJ0NhcGl0YWwgUmVnaW9uJylcbm55X2JjXzIgPC0gbnlfYmMgJT4lXG4gIGZpbHRlcihDb3VudHkgJWluJSBjKCdDYXl1Z2EnLCAnQ29ydGxhbmQnLCAnTWFkaXNvbicsICdPbm9uZGFnYScsICdPc3dlZ28nKSkgJT4lXG4gIG11dGF0ZShSZWdpb24gPSAnQ2VudHJhbCBOZXcgWW9yaycpXG5ueV9iY18zIDwtIG55X2JjICU+JVxuICBmaWx0ZXIoQ291bnR5ICVpbiUgYygnR2VuZXNzZWUnLCAnTGl2aW5nc3RvbicsICdNb25yb2UnLCAnT250YXJpbycsICdPcmxlYW5zJywgJ1NlbmVjYScsICdXYXluZScsICdXeW9taW5nJywgJ1lhdGVzJykpICU+JVxuICBtdXRhdGUoUmVnaW9uID0gJ0ZpbmdlciBMYWtlcycpXG5ueV9iY180IDwtIG55X2JjICU+JVxuICBmaWx0ZXIoQ291bnR5ICVpbiUgYygnTmFzc2F1JywgJ1N1ZmZvbGsnKSkgJT4lXG4gIG11dGF0ZShSZWdpb24gPSAnTG9uZyBJc2xhbmQnKVxubnlfYmNfNSA8LSBueV9iYyAlPiVcbiAgZmlsdGVyKENvdW50eSAlaW4lIGMoJ0R1Y2hlc3MnLCAnT3JhbmdlJywgJ1B1dG5hbScsICdSb2NrbGFuZCcsICdTdWxsaXZhbicsICdVbHN0ZXInLCAnV2VzdGNoZXN0ZXInKSkgJT4lXG4gIG11dGF0ZShSZWdpb24gPSAnTWlkLUh1ZHNvbicpXG5ueV9iY182IDwtIG55X2JjICU+JVxuICBmaWx0ZXIoQ291bnR5ICVpbiUgYygnRnVsdG9uJywgJ0hlcmtpbWVyJywgJ01vbnRnb21lcnknLCAnT25laWRhJywgJ090c2VnbycsICdTY2hvaGFyaWUnKSkgJT4lXG4gIG11dGF0ZShSZWdpb24gPSAnTW9oYXdrIFZhbGxleScpXG5ueV9iY183IDwtIG55X2JjICU+JVxuICBmaWx0ZXIoQ291bnR5ICVpbiUgYygnQnJvbngnLCAnS2luZ3MnLCAnTmV3IFlvcmsnLCAnUXVlZW5zJywgJ1JpY2htb25kJykpICU+JVxuICBtdXRhdGUoUmVnaW9uID0gJ05ldyBZb3JrIENpdHknKVxubnlfYmNfOCA8LSBueV9iYyAlPiVcbiAgZmlsdGVyKENvdW50eSAlaW4lIGMoJ0NsaW50b24nLCAnRXNzZXgnLCAnRnJhbmtsaW4nLCAnSGFtaWx0b24nLCAnSmVmZmVyc29uJywgJ0xld2lzJywgJ1NhaW50IExhd3JlbmNlJykpICU+JVxuICBtdXRhdGUoUmVnaW9uID0gJ05vcnRoIENvdW50cnknKVxubnlfYmNfOSA8LSBueV9iYyAlPiVcbiAgZmlsdGVyKENvdW50eSAlaW4lIGMoJ0Jyb29tZScsICdDaGVtdW5nJywgJ0NoZW5hbmdvJywgJ0RlbGF3YXJlJywgJ1NjaHV5bGVyJywgJ1N0ZXViZW4nLCAnVGlvZ2EnLCAnVG9tcGtpbnMnKSkgJT4lXG4gIG11dGF0ZShSZWdpb24gPSAnU291dGhlcm4gVGllcicpXG5ueV9iY18xMCA8LSBueV9iYyAlPiVcbiAgZmlsdGVyKENvdW50eSAlaW4lIGMoJ0FsbGVnYW55JywgJ0NhdHRhcmF1Z3VzJywgJ0NoYXV0YXVxdWEnLCAnTmlhZ3JhJykpICU+JVxuICBtdXRhdGUoUmVnaW9uID0gJ1dlc3Rlcm4gTmV3IFlvcmsnKVxubnlfYmNfZml4IDwtIHJiaW5kKG55X2JjXzEsIG55X2JjXzIsIG55X2JjXzMsIG55X2JjXzQsIG55X2JjXzUsIG55X2JjXzYsIG55X2JjXzcsIG55X2JjXzgsIG55X2JjXzksIG55X2JjXzEwKVxuXG5ueV9iY19maXggPC0gbnlfYmNfZml4ICU+JVxuICBtdXRhdGUobGV2ZWxfZmN0ID0gY2FzZV93aGVuKFxuICAgIExldmVsID09IDQgfiAnUmVnaW9uYWwgQ2VudGVyJyxcbiAgICBMZXZlbCA9PSAzIH4gJ0xldmVsIDMnLFxuICAgIExldmVsID09IDIgfiAnTGV2ZWwgMicsXG4gICAgTGV2ZWwgPT0gMSB+ICdMZXZlbCAxJ1xuICApKVxuXG5ueV9iY19maXgkbGV2ZWxfZmN0IDwtIGZhY3RvcihueV9iY19maXgkbGV2ZWxfZmN0LCBvcmRlcmVkID0gVFJVRSwgbGV2ZWxzID0gYygnUmVnaW9uYWwgQ2VudGVyJywgJ0xldmVsIDMnLCAnTGV2ZWwgMicsICdMZXZlbCAxJykpICNjb252ZXJ0IGNlbnRlcnMgdG8gZmFjdG9yXG5cbm55X2JjX2ZpeCRSZWdpb24gPC0gZmFjdG9yKG55X2JjX2ZpeCRSZWdpb24sIG9yZGVyZWQgPSBUUlVFLCBsZXZlbHMgPSByZXYoYygnTmV3IFlvcmsgQ2l0eScsICdMb25nIElzbGFuZCcsICdNaWQtSHVkc29uJywgJ0ZpbmdlciBMYWtlcycsICdDYXBpdGFsIFJlZ2lvbicsICdDZW50cmFsIE5ldyBZb3JrJywgJ1NvdXRoZXJuIFRpZXInLCAnTW9oYXdrIFZhbGxleScsICdOb3J0aCBDb3VudHJ5JywgJ1dlc3Rlcm4gTmV3IFlvcmsnKSkpXG5gYGAifQ== -->
+<pre class="r"><code>
+ny_bc_cap &lt;- ny_bc %&gt;%
+  filter(County %in% c(&#39;ALBANY&#39; , &#39;COLUMBIA&#39; , &#39;GREENE&#39;, &#39;RENSSELAER&#39;, &#39;SARATOGA&#39;, &#39;SCHENECTADY&#39;, &#39;WARREN&#39;, &#39;WASHINGTON&#39;)) %&gt;%
+  mutate(Region = &#39;Capital Region&#39;)
+ny_bc_1 &lt;- ny_bc %&gt;%
+  filter(County %in% c(&#39;Albany&#39;, &#39;Columbia&#39;, &#39;Greene&#39;, &#39;Rensselaer&#39;, &#39;Saratoga&#39;, &#39;Schenectady&#39;, &#39;Warren&#39;, &#39;Washington&#39;)) %&gt;%
+  mutate(Region = &#39;Capital Region&#39;)
+ny_bc_2 &lt;- ny_bc %&gt;%
+  filter(County %in% c(&#39;Cayuga&#39;, &#39;Cortland&#39;, &#39;Madison&#39;, &#39;Onondaga&#39;, &#39;Oswego&#39;)) %&gt;%
+  mutate(Region = &#39;Central New York&#39;)
+ny_bc_3 &lt;- ny_bc %&gt;%
+  filter(County %in% c(&#39;Genessee&#39;, &#39;Livingston&#39;, &#39;Monroe&#39;, &#39;Ontario&#39;, &#39;Orleans&#39;, &#39;Seneca&#39;, &#39;Wayne&#39;, &#39;Wyoming&#39;, &#39;Yates&#39;)) %&gt;%
+  mutate(Region = &#39;Finger Lakes&#39;)
+ny_bc_4 &lt;- ny_bc %&gt;%
+  filter(County %in% c(&#39;Nassau&#39;, &#39;Suffolk&#39;)) %&gt;%
+  mutate(Region = &#39;Long Island&#39;)
+ny_bc_5 &lt;- ny_bc %&gt;%
+  filter(County %in% c(&#39;Duchess&#39;, &#39;Orange&#39;, &#39;Putnam&#39;, &#39;Rockland&#39;, &#39;Sullivan&#39;, &#39;Ulster&#39;, &#39;Westchester&#39;)) %&gt;%
+  mutate(Region = &#39;Mid-Hudson&#39;)
+ny_bc_6 &lt;- ny_bc %&gt;%
+  filter(County %in% c(&#39;Fulton&#39;, &#39;Herkimer&#39;, &#39;Montgomery&#39;, &#39;Oneida&#39;, &#39;Otsego&#39;, &#39;Schoharie&#39;)) %&gt;%
+  mutate(Region = &#39;Mohawk Valley&#39;)
+ny_bc_7 &lt;- ny_bc %&gt;%
+  filter(County %in% c(&#39;Bronx&#39;, &#39;Kings&#39;, &#39;New York&#39;, &#39;Queens&#39;, &#39;Richmond&#39;)) %&gt;%
+  mutate(Region = &#39;New York City&#39;)
+ny_bc_8 &lt;- ny_bc %&gt;%
+  filter(County %in% c(&#39;Clinton&#39;, &#39;Essex&#39;, &#39;Franklin&#39;, &#39;Hamilton&#39;, &#39;Jefferson&#39;, &#39;Lewis&#39;, &#39;Saint Lawrence&#39;)) %&gt;%
+  mutate(Region = &#39;North Country&#39;)
+ny_bc_9 &lt;- ny_bc %&gt;%
+  filter(County %in% c(&#39;Broome&#39;, &#39;Chemung&#39;, &#39;Chenango&#39;, &#39;Delaware&#39;, &#39;Schuyler&#39;, &#39;Steuben&#39;, &#39;Tioga&#39;, &#39;Tompkins&#39;)) %&gt;%
+  mutate(Region = &#39;Southern Tier&#39;)
+ny_bc_10 &lt;- ny_bc %&gt;%
+  filter(County %in% c(&#39;Allegany&#39;, &#39;Cattaraugus&#39;, &#39;Chautauqua&#39;, &#39;Niagra&#39;)) %&gt;%
+  mutate(Region = &#39;Western New York&#39;)
+ny_bc_fix &lt;- rbind(ny_bc_1, ny_bc_2, ny_bc_3, ny_bc_4, ny_bc_5, ny_bc_6, ny_bc_7, ny_bc_8, ny_bc_9, ny_bc_10)
+
+ny_bc_fix &lt;- ny_bc_fix %&gt;%
+  mutate(level_fct = case_when(
+    Level == 4 ~ &#39;Regional Center&#39;,
+    Level == 3 ~ &#39;Level 3&#39;,
+    Level == 2 ~ &#39;Level 2&#39;,
+    Level == 1 ~ &#39;Level 1&#39;
+  ))
+
+ny_bc_fix$level_fct &lt;- factor(ny_bc_fix$level_fct, ordered = TRUE, levels = c(&#39;Regional Center&#39;, &#39;Level 3&#39;, &#39;Level 2&#39;, &#39;Level 1&#39;)) #convert centers to factor
+
+ny_bc_fix$Region &lt;- factor(ny_bc_fix$Region, ordered = TRUE, levels = rev(c(&#39;New York City&#39;, &#39;Long Island&#39;, &#39;Mid-Hudson&#39;, &#39;Finger Lakes&#39;, &#39;Capital Region&#39;, &#39;Central New York&#39;, &#39;Southern Tier&#39;, &#39;Mohawk Valley&#39;, &#39;North Country&#39;, &#39;Western New York&#39;)))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5nZ3Bsb3QobnlfYmNfZml4KSArXG4gIGdlb21fYmFyKGFlcyh4ID0gUmVnaW9uLCBmaWxsID0gbGV2ZWxfZmN0KSkgK1xuICBjb29yZF9mbGlwKCkgK1xuICBsYWJzKHRpdGxlID0gJ05ZIFN0YXRlIEJpcnRoaW5nIENlbnRlciBEZXNpZ25hdGlvbnMgYnkgUmVnaW9uJywgeSA9ICcjIG9mIEhvc3BpdGFscycsIGZpbGwgPSAnUGVyaW5hdGFsIENlbnRlciBUeXBlJykgK1xuICB0aGVtZShsZWdlbmQucG9zaXRpb24gPSBjKDAuNzUsIDAuMjUpKVxuXG5gYGAifQ== -->
+<pre class="r"><code>
+ggplot(ny_bc_fix) +
+  geom_bar(aes(x = Region, fill = level_fct)) +
+  coord_flip() +
+  labs(title = &#39;NY State Birthing Center Designations by Region&#39;, y = &#39;# of Hospitals&#39;, fill = &#39;Perinatal Center Type&#39;) +
+  theme(legend.position = c(0.75, 0.25))
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="birth-defects" class="section level2">
+<h2>Birth Defects</h2>
+<!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYmRfZGYgPC0gcmVhZC5jc3YoJ2h0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9oaWxsdDUvREFUQTYwOC9tYWluL05ZU19CRCcpICNkYXRhIG9ubHkgYXZhaWxhYmxlIGluIDMteWVhciBpbmNyZW1lbnRzIChlLmcuLCAyMDAwLTIwMDIpXG5iZF9kZiR0b3RhbF9kZWZlY3RzIDwtIHJvd1N1bXMoYmRfZGZbLGMoMzo1MSldKSAjIyBzdW0gZGVmZWN0cyBmb3IgZWFjaCByb3cgcGVyIGNvdW50eVxuXG5gYGAifQ== -->
 <pre class="r"><code>bd_df &lt;- read.csv(&#39;https://raw.githubusercontent.com/hillt5/DATA608/main/NYS_BD&#39;) #data only available in 3-year increments (e.g., 2000-2002)
@@ -1821,35 +2225,83 @@ bd_df$total_defects &lt;- rowSums(bd_df[,c(3:51)]) ## sum defects for each row p
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubnlfcG9wIDwtIHJlYWQuY3N2KCdodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vaGlsbHQ1L0RBVEE2MDgvbWFpbi9Bbm51YWxfUG9wdWxhdGlvbl9Fc3RpbWF0ZXNfZm9yX05ld19Zb3JrX1N0YXRlX2FuZF9Db3VudGllc19fQmVnaW5uaW5nXzE5NzAnKVxuXG5ueV9wb3BfMDhfMDkgPC0gbnlfcG9wICU+JVxuICBmaWx0ZXIoUHJvZ3JhbS5UeXBlID09ICdJbnRlcmNlbnNhbCBQb3B1bGF0aW9uIEVzdGltYXRlJyAmIChZZWFyID09IDIwMDggfCBZZWFyID09IDIwMDkpKSAjaW50ZXJjZW5zYWwgaXMgbW9zdCBhY2N1cmF0ZSBwcmVkaWN0aW9uIG9mIHBvcHVsYXRpb25cblxubnlfcG9wXzEwIDwtIG55X3BvcCAlPiVcbiAgZmlsdGVyKFByb2dyYW0uVHlwZSA9PSAnQ2Vuc3VzIEJhc2UgUG9wdWxhdGlvbicgJiBZZWFyID09IDIwMTApICNjZW5zdXMgeWVhciwgZXhhY3QgY291bnRcbiBcbm55X3BvcF8xMTE3IDwtIG55X3BvcCAlPiVcbiAgZmlsdGVyKFByb2dyYW0uVHlwZSA9PSAnUG9zdGNlbnNhbCBQb3B1bGF0aW9uIEVzdGltYXRlJyAmIFllYXIgPiAyMDEwICYgWWVhciA8IDIwMTgpICNlc3RpbWF0ZSBiYXNlZCBvbiBsYXN0IGNlbnN1c1xuXG5ueV9wb3BfMDgxNyA8LSByYmluZChueV9wb3BfMDhfMDksIG55X3BvcF8xMCwgbnlfcG9wXzExMTcpICNiaW5kIGludG8gb25lIGNvbXBsZXRlIGRhdGFmcmFtZVxuXG5gYGAifQ== -->
-<pre class="r"><code>ny_pop &lt;- read.csv(&#39;https://raw.githubusercontent.com/hillt5/DATA608/main/Annual_Population_Estimates_for_New_York_State_and_Counties__Beginning_1970&#39;)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5cbnByZWduYW5jeV9kZiAlPiVcbiAgZ3JvdXBfYnkoSG9zcGl0YWwuTmFtZSkgJT4lXG4gIHNlbGVjdChGYWNpbGl0eS5JRCwgSG9zcGl0YWwuTmFtZSkgJT4lXG4gIGRpc3RpbmN0KCkgJT4lXG4gIG1lcmdlKG55X2JjLCBieS54ID0gIFwiRmFjaWxpdHkuSURcIiwgYnkueSA9ICdJRCcsIGFsbC54ID0gVFJVRSkgJT4lXG4gIHdyaXRlLmNzdigpXG5cbmhlYWQoYmRfZGYpXG5cbmBgYCJ9 -->
+<pre class="r"><code>
 
-ny_pop_08_09 &lt;- ny_pop %&gt;%
-  filter(Program.Type == &#39;Intercensal Population Estimate&#39; &amp; (Year == 2008 | Year == 2009)) #intercensal is most accurate prediction of population
+pregnancy_df %&gt;%
+  group_by(Hospital.Name) %&gt;%
+  select(Facility.ID, Hospital.Name) %&gt;%
+  distinct() %&gt;%
+  merge(ny_bc, by.x =  &quot;Facility.ID&quot;, by.y = &#39;ID&#39;, all.x = TRUE) %&gt;%
+  write.csv()
 
-ny_pop_10 &lt;- ny_pop %&gt;%
-  filter(Program.Type == &#39;Census Base Population&#39; &amp; Year == 2010) #census year, exact count
- 
-ny_pop_1117 &lt;- ny_pop %&gt;%
-  filter(Program.Type == &#39;Postcensal Population Estimate&#39; &amp; Year &gt; 2010 &amp; Year &lt; 2018) #estimate based on last census
-
-ny_pop_0817 &lt;- rbind(ny_pop_08_09, ny_pop_10, ny_pop_1117) #bind into one complete dataframe
+head(bd_df)
 </code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5OWV9zaGFwZSA8LSByZWFkT0dSKGRzbj0gcGFzdGUwKGdldHdkKCksXCIvQ291bnRpZXNfc2hvcmVsaW5lLnNocC9cIiksIFxuICBsYXllcj1cIkNvdW50aWVzX3Nob3JlbGluZS5zaHBcIixcbiAgdmVyYm9zZT1GQUxTRSlcblxuZ3dkKClcbmBgYCJ9 -->
-<pre class="r"><code>
-NY_shape &lt;- readOGR(dsn= paste0(getwd(),&quot;/Counties_shoreline.shp/&quot;), 
-  layer=&quot;Counties_shoreline.shp&quot;,
-  verbose=FALSE)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYmRfZGYgPC0gcmVhZC5jc3YoJ2h0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9oaWxsdDUvREFUQTYwOC9tYWluL05ZU19CRCcpXG5iZF9kZiR0b3RhbF9kZWZlY3RzIDwtIHJvd1N1bXMoYmRfZGZbLGMoMzo1MSldKVxuXG5iZF9maXggPC0gYmRfZGZcbmJkX2ZpeF8xIDwtIGJkX2ZpeCAlPiVcbiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ0FsYmFueScsICdDb2x1bWJpYScsICdHcmVlbmUnLCAnUmVuc3NlbGFlcicsICdTYXJhdG9nYScsICdTY2hlbmVjdGFkeScsICdXYXJyZW4nLCAnV2FzaGluZ3RvbicpKSAlPiVcbiAgbXV0YXRlKFJlZ2lvbiA9ICdDYXBpdGFsIFJlZ2lvbicpXG5iZF9maXhfMiA8LSBiZF9maXggJT4lXG4gIGZpbHRlcihHZW9ncmFwaHkgJWluJSBjKCdDYXl1Z2EnLCAnQ29ydGxhbmQnLCAnTWFkaXNvbicsICdPbm9uZGFnYScsICdPc3dlZ28nKSkgJT4lXG4gIG11dGF0ZShSZWdpb24gPSAnQ2VudHJhbCBOZXcgWW9yaycpXG5iZF9maXhfMyA8LSBiZF9maXggJT4lXG4gIGZpbHRlcihHZW9ncmFwaHkgJWluJSBjKCdHZW5lc3NlZScsICdMaXZpbmdzdG9uJywgJ01vbnJvZScsICdPbnRhcmlvJywgJ09ybGVhbnMnLCAnU2VuZWNhJywgJ1dheW5lJywgJ1d5b21pbmcnLCAnWWF0ZXMnKSkgJT4lXG4gIG11dGF0ZShSZWdpb24gPSAnRmluZ2VyIExha2VzJylcbmJkX2ZpeF80IDwtIGJkX2ZpeCAlPiVcbiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ05hc3NhdScsICdTdWZmb2xrJykpICU+JVxuICBtdXRhdGUoUmVnaW9uID0gJ0xvbmcgSXNsYW5kJylcbmJkX2ZpeF81IDwtIGJkX2ZpeCAlPiVcbiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ0R1Y2hlc3MnLCAnT3JhbmdlJywgJ1B1dG5hbScsICdSb2NrbGFuZCcsICdTdWxsaXZhbicsICdVbHN0ZXInLCAnV2VzdGNoZXN0ZXInKSkgJT4lXG4gIG11dGF0ZShSZWdpb24gPSAnTWlkLUh1ZHNvbicpXG5iZF9maXhfNiA8LSBiZF9maXggJT4lXG4gIGZpbHRlcihHZW9ncmFwaHkgJWluJSBjKCdGdWx0b24nLCAnSGVya2ltZXInLCAnTW9udGdvbWVyeScsICdPbmVpZGEnLCAnT3RzZWdvJywgJ1NjaG9oYXJpZScpKSAlPiVcbiAgbXV0YXRlKFJlZ2lvbiA9ICdNb2hhd2sgVmFsbGV5JylcbmJkX2ZpeF83IDwtIGJkX2ZpeCAlPiVcbiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ0Jyb254JywgJ0tpbmdzJywgJ05ldyBZb3JrJywgJ1F1ZWVucycsICdSaWNobW9uZCcpKSAlPiVcbiAgbXV0YXRlKFJlZ2lvbiA9ICdOZXcgWW9yayBDaXR5JylcbmJkX2ZpeF84IDwtIGJkX2ZpeCAlPiVcbiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ0NsaW50b24nLCAnRXNzZXgnLCAnRnJhbmtsaW4nLCAnSGFtaWx0b24nLCAnSmVmZmVyc29uJywgJ0xld2lzJywgJ1NhaW50IExhd3JlbmNlJykpICU+JVxuICBtdXRhdGUoUmVnaW9uID0gJ05vcnRoIENvdW50cnknKVxuYmRfZml4XzkgPC0gYmRfZml4ICU+JVxuICBmaWx0ZXIoR2VvZ3JhcGh5ICVpbiUgYygnQnJvb21lJywgJ0NoZW11bmcnLCAnQ2hlbmFuZ28nLCAnRGVsYXdhcmUnLCAnU2NodXlsZXInLCAnU3RldWJlbicsICdUaW9nYScsICdUb21wa2lucycpKSAlPiVcbiAgbXV0YXRlKFJlZ2lvbiA9ICdTb3V0aGVybiBUaWVyJylcbmJkX2ZpeF8xMCA8LSBiZF9maXggJT4lXG4gIGZpbHRlcihHZW9ncmFwaHkgJWluJSBjKCdBbGxlZ2FueScsICdDYXR0YXJhdWd1cycsICdDaGF1dGF1cXVhJywgJ05pYWdyYScpKSAlPiVcbiAgbXV0YXRlKFJlZ2lvbiA9ICdXZXN0ZXJuIE5ldyBZb3JrJylcblxuYmRfZml4IDwtIHJiaW5kKGJkX2ZpeF8xLCBiZF9maXhfMiwgYmRfZml4XzMsIGJkX2ZpeF80LCBiZF9maXhfNSwgYmRfZml4XzYsIGJkX2ZpeF83LCBiZF9maXhfOCwgYmRfZml4XzksIGJkX2ZpeF8xMClcblxuXG5cbmBgYCJ9 -->
+<pre class="r"><code>bd_df &lt;- read.csv(&#39;https://raw.githubusercontent.com/hillt5/DATA608/main/NYS_BD&#39;)
+bd_df$total_defects &lt;- rowSums(bd_df[,c(3:51)])
 
-gwd()</code></pre>
+bd_fix &lt;- bd_df
+bd_fix_1 &lt;- bd_fix %&gt;%
+  filter(Geography %in% c(&#39;Albany&#39;, &#39;Columbia&#39;, &#39;Greene&#39;, &#39;Rensselaer&#39;, &#39;Saratoga&#39;, &#39;Schenectady&#39;, &#39;Warren&#39;, &#39;Washington&#39;)) %&gt;%
+  mutate(Region = &#39;Capital Region&#39;)
+bd_fix_2 &lt;- bd_fix %&gt;%
+  filter(Geography %in% c(&#39;Cayuga&#39;, &#39;Cortland&#39;, &#39;Madison&#39;, &#39;Onondaga&#39;, &#39;Oswego&#39;)) %&gt;%
+  mutate(Region = &#39;Central New York&#39;)
+bd_fix_3 &lt;- bd_fix %&gt;%
+  filter(Geography %in% c(&#39;Genessee&#39;, &#39;Livingston&#39;, &#39;Monroe&#39;, &#39;Ontario&#39;, &#39;Orleans&#39;, &#39;Seneca&#39;, &#39;Wayne&#39;, &#39;Wyoming&#39;, &#39;Yates&#39;)) %&gt;%
+  mutate(Region = &#39;Finger Lakes&#39;)
+bd_fix_4 &lt;- bd_fix %&gt;%
+  filter(Geography %in% c(&#39;Nassau&#39;, &#39;Suffolk&#39;)) %&gt;%
+  mutate(Region = &#39;Long Island&#39;)
+bd_fix_5 &lt;- bd_fix %&gt;%
+  filter(Geography %in% c(&#39;Duchess&#39;, &#39;Orange&#39;, &#39;Putnam&#39;, &#39;Rockland&#39;, &#39;Sullivan&#39;, &#39;Ulster&#39;, &#39;Westchester&#39;)) %&gt;%
+  mutate(Region = &#39;Mid-Hudson&#39;)
+bd_fix_6 &lt;- bd_fix %&gt;%
+  filter(Geography %in% c(&#39;Fulton&#39;, &#39;Herkimer&#39;, &#39;Montgomery&#39;, &#39;Oneida&#39;, &#39;Otsego&#39;, &#39;Schoharie&#39;)) %&gt;%
+  mutate(Region = &#39;Mohawk Valley&#39;)
+bd_fix_7 &lt;- bd_fix %&gt;%
+  filter(Geography %in% c(&#39;Bronx&#39;, &#39;Kings&#39;, &#39;New York&#39;, &#39;Queens&#39;, &#39;Richmond&#39;)) %&gt;%
+  mutate(Region = &#39;New York City&#39;)
+bd_fix_8 &lt;- bd_fix %&gt;%
+  filter(Geography %in% c(&#39;Clinton&#39;, &#39;Essex&#39;, &#39;Franklin&#39;, &#39;Hamilton&#39;, &#39;Jefferson&#39;, &#39;Lewis&#39;, &#39;Saint Lawrence&#39;)) %&gt;%
+  mutate(Region = &#39;North Country&#39;)
+bd_fix_9 &lt;- bd_fix %&gt;%
+  filter(Geography %in% c(&#39;Broome&#39;, &#39;Chemung&#39;, &#39;Chenango&#39;, &#39;Delaware&#39;, &#39;Schuyler&#39;, &#39;Steuben&#39;, &#39;Tioga&#39;, &#39;Tompkins&#39;)) %&gt;%
+  mutate(Region = &#39;Southern Tier&#39;)
+bd_fix_10 &lt;- bd_fix %&gt;%
+  filter(Geography %in% c(&#39;Allegany&#39;, &#39;Cattaraugus&#39;, &#39;Chautauqua&#39;, &#39;Niagra&#39;)) %&gt;%
+  mutate(Region = &#39;Western New York&#39;)
+
+bd_fix &lt;- rbind(bd_fix_1, bd_fix_2, bd_fix_3, bd_fix_4, bd_fix_5, bd_fix_6, bd_fix_7, bd_fix_8, bd_fix_9, bd_fix_10)
+</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyNcIjIwMDktMjAxMVwiIFwiMjAxMi0yMDE0XCJcblxudW5pcXVlKGJkX2RmJERhdGFZZWFycylcblxuYmRfcmVnaW9uIDwtIGJkX2ZpeCAlPiVcbiAgZmlsdGVyKERhdGFZZWFycyAlaW4lIGMoJzIwMDktMjAxMScsICcyMDEyLTIwMTQnKSkgJT4lXG4gIGdyb3VwX2J5KFJlZ2lvbikgJT4lXG4gIHN1bW1hcml6ZShyZWdpb25fZGVmZWN0cyA9IHN1bSh0b3RhbF9kZWZlY3RzKSkgJT4lXG4gIGFycmFuZ2UoZGVzYyhyZWdpb25fZGVmZWN0cykpXG5cblxuXG5gYGAifQ== -->
+<pre class="r"><code>##&quot;2009-2011&quot; &quot;2012-2014&quot;
+
+unique(bd_df$DataYears)
+
+bd_region &lt;- bd_fix %&gt;%
+  filter(DataYears %in% c(&#39;2009-2011&#39;, &#39;2012-2014&#39;)) %&gt;%
+  group_by(Region) %&gt;%
+  summarize(region_defects = sum(total_defects)) %&gt;%
+  arrange(desc(region_defects))
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="maps" class="section level2">
+<h2>Maps</h2>
 <p>Source dataset:</p>
 <p><a href="https://health.data.ny.gov/Health/Hospital-Maternity-Information-Beginning-2008/net3-iygw" class="uri">https://health.data.ny.gov/Health/Hospital-Maternity-Information-Beginning-2008/net3-iygw</a></p>
 <p>Potential adjunct datasets:</p>
@@ -1857,8 +2309,10 @@ gwd()</code></pre>
 <p><a href="https://health.data.ny.gov/Health/Vital-Statistics-Live-Births-and-Fertility-Rates-b/c2tx-jecb" class="uri">https://health.data.ny.gov/Health/Vital-Statistics-Live-Births-and-Fertility-Rates-b/c2tx-jecb</a></p>
 <p><a href="https://data.ny.gov/Government-Finance/Annual-Population-Estimates-for-New-York-State-and/krt9-ym2k" class="uri">https://data.ny.gov/Government-Finance/Annual-Population-Estimates-for-New-York-State-and/krt9-ym2k</a></p>
 <!-- rnb-text-end -->
+</div>
+</div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkZpbmFsIFByb2plY3QgUHJvcG9zYWwgZm9yIERBVEEgNjA4Ig0KYXV0aG9yOiAiVGhvbWFzIEhpbGwiDQpvdXRwdXQ6DQogIGh0bWxfZG9jdW1lbnQ6IGRlZmF1bHQNCiAgaHRtbF9ub3RlYm9vazogZGVmYXVsdA0KLS0tDQoNCmBgYHtyLCBsaWJyYXJ5fQ0KDQpsaWJyYXJ5KGdncGxvdDIpDQpsaWJyYXJ5KGRwbHlyKQ0KbGlicmFyeShyZ2RhbCkNCg0KYGBgDQoNCg0KRmluYWwgUHJvamVjdCBQcm9wb3NhbDogTmV3IFlvcmsgU3RhdGUgTWF0ZXJuaXR5IGFuZCBMYWJvciBTdGF0aXN0aWNzDQoNCg0KDQpNYXRlcm5pdHkgYW5kIGxhYm9yIGFyZSBhIGNydWNpYWwgdGltZSBmb3IgbWFueSBoZWFsdGggaW50ZXJ2ZW50aW9ucywgYW5kIE5ldyBZb3JrIHN0YXRlIG5vdGFibHkgbWFuZGF0ZXMgYmFzaWMgc3RhdGlzdGljcyBiZSBhdmFpbGFibGUgZm9yIGEgZmV3IGRvemVuIGNoYXJhY3RlcmlzdGljcyBvZiBkZWxpdmVyeS4gVGhlIHJvdXRlIG9mIGRlbGl2ZXJ5LCBmZXRhbCBwcmVzZW50YXRpb24sIGFuZCB1c2Ugb2YgYW5lc3RoZXNpYSBhcmUgYWxsIGNyaXRpY2FsIGVsZW1lbnRzIG9mIHRoZSBwcm9jZXNzLCBhbmQgdW5kZXJzdGFuZGluZyB0aGUgcHJldmFsZW5jZSBhbmQgdHJlbmRzIG9mIGVhY2ggbWV0aG9kIG1heSBvZmZlciBpbXByb3ZlbWVudHMgaW4gZXhwZWN0YXRpb25zIHRvIHByYWN0aXRpb25lcnMgYXMgd2VsbCBhcyBsYXlwZW9wbGUuDQoNCg0KYGBge3IsIGNzdn0NCg0KbnlfbWF0ZXJuaXR5IDwtIHJlYWQuY3N2KCdodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vaGlsbHQ1L0RBVEE2MDgvbWFpbi9Ib3NwaXRhbF9NYXRlcm5pdHlfSW5mb3JtYXRpb25fX0JlZ2lubmluZ18yMDA4LmNzdicpDQoNCg0KYGBgDQoNCg0KVGhlIGRhdGFzZXQgYXZhaWxhYmxlIGZvciBOWSBzdGF0ZSBvZmZlcnMgdGhlIHJlcXVpcmVkIHN0YXRpc3RpY3MgZm9yIGEgcGVyaW9kIDIwMDgg4oCTIDIwMTcsIHNlcGFyYXRlZCBieSBlYWNoIGhvc3BpdGFsIGFuZCBpdHMgbG9jYXRpb24uIEZvciB0aGlzIHByb2plY3QsIG15IGdvYWxzIGFyZSB0byBwcm92aWRlIHNvbWUgdmlzdWFsaXphdGlvbnMgYW5kIGFwcHMgZm9yIGxheXBlb3BsZSB0byBleHBsb3JlIG1hdGVybml0eSBzdGF0aXN0aWNzLg0KDQoNCmBgYHtyLCBjb2xuYW1lc30NCg0KaGVhZChueV9tYXRlcm5pdHkpDQoNCmNvbG5hbWVzKG55X21hdGVybml0eSkNCmBgYA0KDQoNCmBgYHtyLCB1bmlxdWUtZW50cmllc30NCg0KdW5pcXVlKG55X21hdGVybml0eSRZZWFyKQ0KDQpsZW5ndGgodW5pcXVlKG55X21hdGVybml0eSRGYWNpbGl0eS5JRCkpDQoNCnVuaXF1ZShueV9tYXRlcm5pdHkkTWVhc3VyZS5OYW1lKQ0KDQp1bmlxdWUobnlfbWF0ZXJuaXR5JERlbm9taW5hdG9yKQ0KDQp1bmlxdWUobnlfbWF0ZXJuaXR5JENhdGVnb3J5KQ0KDQoNCmBgYA0KYGBge3IsIGJpcnRoLWRlZmVjdHN9DQpiZF9kZiA8LSByZWFkLmNzdignaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2hpbGx0NS9EQVRBNjA4L21haW4vTllTX0JEJykgI2RhdGEgb25seSBhdmFpbGFibGUgaW4gMy15ZWFyIGluY3JlbWVudHMgKGUuZy4sIDIwMDAtMjAwMikNCmJkX2RmJHRvdGFsX2RlZmVjdHMgPC0gcm93U3VtcyhiZF9kZlssYygzOjUxKV0pICMjIHN1bSBkZWZlY3RzIGZvciBlYWNoIHJvdyBwZXIgY291bnR5DQoNCmBgYA0KDQoNCmBgYHtyLCBueS1wb3B9DQpueV9wb3AgPC0gcmVhZC5jc3YoJ2h0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9oaWxsdDUvREFUQTYwOC9tYWluL0FubnVhbF9Qb3B1bGF0aW9uX0VzdGltYXRlc19mb3JfTmV3X1lvcmtfU3RhdGVfYW5kX0NvdW50aWVzX19CZWdpbm5pbmdfMTk3MCcpDQoNCm55X3BvcF8wOF8wOSA8LSBueV9wb3AgJT4lDQogIGZpbHRlcihQcm9ncmFtLlR5cGUgPT0gJ0ludGVyY2Vuc2FsIFBvcHVsYXRpb24gRXN0aW1hdGUnICYgKFllYXIgPT0gMjAwOCB8IFllYXIgPT0gMjAwOSkpICNpbnRlcmNlbnNhbCBpcyBtb3N0IGFjY3VyYXRlIHByZWRpY3Rpb24gb2YgcG9wdWxhdGlvbg0KDQpueV9wb3BfMTAgPC0gbnlfcG9wICU+JQ0KICBmaWx0ZXIoUHJvZ3JhbS5UeXBlID09ICdDZW5zdXMgQmFzZSBQb3B1bGF0aW9uJyAmIFllYXIgPT0gMjAxMCkgI2NlbnN1cyB5ZWFyLCBleGFjdCBjb3VudA0KIA0KbnlfcG9wXzExMTcgPC0gbnlfcG9wICU+JQ0KICBmaWx0ZXIoUHJvZ3JhbS5UeXBlID09ICdQb3N0Y2Vuc2FsIFBvcHVsYXRpb24gRXN0aW1hdGUnICYgWWVhciA+IDIwMTAgJiBZZWFyIDwgMjAxOCkgI2VzdGltYXRlIGJhc2VkIG9uIGxhc3QgY2Vuc3VzDQoNCm55X3BvcF8wODE3IDwtIHJiaW5kKG55X3BvcF8wOF8wOSwgbnlfcG9wXzEwLCBueV9wb3BfMTExNykgI2JpbmQgaW50byBvbmUgY29tcGxldGUgZGF0YWZyYW1lDQoNCmBgYA0KDQpgYGB7ciwgbnktbWFwfQ0KDQpOWV9zaGFwZSA8LSByZWFkT0dSKGRzbj0gcGFzdGUwKGdldHdkKCksIi9Db3VudGllc19zaG9yZWxpbmUuc2hwLyIpLCANCiAgbGF5ZXI9IkNvdW50aWVzX3Nob3JlbGluZS5zaHAiLA0KICB2ZXJib3NlPUZBTFNFKQ0KDQpnd2QoKQ0KYGBgDQoNCg0KDQoNClNvdXJjZSBkYXRhc2V0Og0KDQpodHRwczovL2hlYWx0aC5kYXRhLm55Lmdvdi9IZWFsdGgvSG9zcGl0YWwtTWF0ZXJuaXR5LUluZm9ybWF0aW9uLUJlZ2lubmluZy0yMDA4L25ldDMtaXlndw0KDQoNCg0KUG90ZW50aWFsIGFkanVuY3QgZGF0YXNldHM6IA0KDQpodHRwczovL2hlYWx0aC5kYXRhLm55Lmdvdi9IZWFsdGgvQmlydGgtRGVmZWN0LVByZXZhbGVuY2UtQmVnaW5uaW5nLTE5OTIvbXo4eC0yNTV4DQogDQoNCmh0dHBzOi8vaGVhbHRoLmRhdGEubnkuZ292L0hlYWx0aC9WaXRhbC1TdGF0aXN0aWNzLUxpdmUtQmlydGhzLWFuZC1GZXJ0aWxpdHktUmF0ZXMtYi9jMnR4LWplY2INCiANCg0KaHR0cHM6Ly9kYXRhLm55Lmdvdi9Hb3Zlcm5tZW50LUZpbmFuY2UvQW5udWFsLVBvcHVsYXRpb24tRXN0aW1hdGVzLWZvci1OZXctWW9yay1TdGF0ZS1hbmQva3J0OS15bTJrDQoNCg==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkZpbmFsIFByb2plY3QgZm9yIERBVEEgNjA4Ig0KYXV0aG9yOiAiYnkgVGhvbWFzIEhpbGwiDQpvdXRwdXQ6DQogIGh0bWxfbm90ZWJvb2s6IGRlZmF1bHQNCiAgaHRtbF9kb2N1bWVudDogZGVmYXVsdA0KLS0tDQoNCmBgYHtyLCBsaWJyYXJ5fQ0KDQpsaWJyYXJ5KGdncGxvdDIpDQpsaWJyYXJ5KGRwbHlyKQ0KbGlicmFyeShzdHJpbmdyKQ0KbGlicmFyeShzZikNCmxpYnJhcnkodGlkeXIpDQoNCmBgYA0KDQoNCiMgRmluYWwgUHJvamVjdDogTmV3IFlvcmsgU3RhdGUgTWF0ZXJuaXR5IGFuZCBMYWJvciBTdGF0aXN0aWNzDQoNCiMjIEludHJvZHVjdGlvbiANCg0KUHJlZ25hbmN5IGFuZCBjaGlsZGJpcnRoIGFyZSBhIGNyaXRpY2FsIHBlcmlvZCBmb3IgYm90aCBtb3RoZXIgYW5kIGNoaWxkLiBDdXJyZW50bHksIHRoZSBtb3N0IGNvbW1vbiBwbGFjZSBvZiBiaXJ0aCByZW1haW5zIGF0IGEgaGVhbHRoY2FyZSBmYWNpbGl0eSwgd2hldGhlciBhdCBhIGJpcnRoIGNlbnRlciBvciBsYWJvciBhbmQgZGVsaXZlcnkgZGVwYXJ0bWVudCB3aXRoaW4gYSBob3NwaXRhbC4gVG8gaGVscCBleHBlY3RhbnQgcGF0aWVudHMgYW5kIHRoZWlyIGZhbWlsaWVzIG1ha2UgaW5mb3JtZWQgZGVjaXNpb25zIGFib3V0IHByZS1ib29raW5nIGEgZGVsaXZlcnksIHRoZSBzdGF0ZSBvZiBOZXcgWW9yayBtYW5kYXRlcyB0aGF0IGVhY2ggZmFjaWxpdHkgb2YgYSBjZXJ0YWluIHNpemUgbXVzdCBwcm92aWRlIGFubnVhbCBhZ2dyZWdhdGUgc3RhdGlzdGljcyB0byBiZXR0ZXIgaW5mb3JtIHRoZSBkZWNpc2lvbi4NCg0KVGhlIHByb3ZpZGVkIHN0YXRpc3RpY3MgYXQgYSBtaW5pbXVtIG11c3QgaW5jbHVkZSBzZXZlcmFsIG1hdGVybml0eS1yZWxhdGVkIHByb2NlZHVyZXMsIGluY2x1ZGluZyByYXRlIG9mIGNlc2FyZWFuIHNlY3Rpb25zIHZlcnN1cyB2YWdpbmFsIGRlbGl2ZXJpZXMsIGJyZWVjaCBiaXJ0aHMgZGVsaXZlcmVkIHZhZ2luYWxseSwgYW5kIGRlbGl2ZXJpZXMgYnkgbWlkd2l2ZXMsIGFzIHdlbGwgYXMgZWxlbWVudHMgb2YgbWVkaWNhbCBjYXJlIHN1Y2ggYXMgZGVsaXZlcmllcyB1c2luZyBmb3JjZXBzIGFuZCByYXRlcyBvZiBhbmFsZ2VzaWEvYW5lc3RoZXNpYSwgZXBpc2lvdG9taWVzLCBhbmQgaW5kdWN0aW9uL2F1Z21lbnRhdGlvbiBvZiBsYWJvci4gVGhlIE5ZIERlcGFydG1lbnQgb2YgSGVhbHRoIGFkZHMgdGhlIGNhdmVhdCB0aGF0IHRoZXNlIHN0YXRpc3RpY3MgZG8gbm90IGluZm9ybSBhYm91dCBhIHNwZWNpZmljIGhlYWx0aGNhcmUgcHJhY3RpdGlvbmVy4oCZcyBwcmVmZXJlbmNlcywgYnV0IGFyZSB1c2VmdWwgaW4gcGxheWluZyBhbiBhY3RpdmUgcGFydCBpbiBwbGFubmluZyBmb3IgY2hpbGRiaXJ0aC4NCg0KDQpgYGB7ciwgY3N2fQ0KDQpwcmVnbmFuY3lfZGYgPC0gcmVhZC5jc3YoJ2h0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9oaWxsdDUvREFUQTYwOC9tYWluL0hvc3BpdGFsX01hdGVybml0eV9JbmZvcm1hdGlvbl9fQmVnaW5uaW5nXzIwMDguY3N2JykNCg0KDQpgYGANCg0KDQoNCmBgYHtyLCBjb2xuYW1lc30NCmNvbG5hbWVzKHByZWduYW5jeV9kZikNCnVuaXF1ZShwcmVnbmFuY3lfZGYkWWVhcikgI3llYXJzIGluY2x1ZGVkDQpsZW5ndGgodW5pcXVlKHByZWduYW5jeV9kZiRIb3NwaXRhbC5OYW1lKSkgI251bWJlciBvZiBob3NwaXRhbHMNCnVuaXF1ZShwcmVnbmFuY3lfZGYkSG9zcGl0YWwuQ291bnR5KSAjY291bnRpZXMNCg0KYGBgDQoNCg0KVGhlIGRhdGFzZXQgYXZhaWxhYmxlIGZvciBOWSBzdGF0ZSBvZmZlcnMgdGhlIHJlcXVpcmVkIHN0YXRpc3RpY3MgZm9yIGEgcGVyaW9kIDIwMDgg4oCTIDIwMTcsIHNlcGFyYXRlZCBieSBlYWNoIGhvc3BpdGFsIGFuZCBpdHMgbG9jYXRpb24uIEl0IGluY2x1ZGVzIDE0NiBob3NwaXRhbHMgc3ByZWFkIHRocm91Z2hvdXQgYWJvdXQgODAlIG9mIE5ldyBZb3JrJ3MgNjMgY291bnRpZXMuIFRoZXJlIGFyZSB0d28gY29sdW1ucyBmb3IgJ1Jlc3Qgb2YgU3RhdGUnIGFuZCAnU3RhdGV3aWRlJyB0aGF0IG5lZWQgdG8gYmUgb21pdHRlZCBmb3IgZ2VuZXJhdGluZyBjb3VudHkgc3RhdGlzdGljcy4gIFRoZSBsYXcgaW4gcXVlc3Rpb24gc3BlY2lmaWVzIHRoYXQgcmVwb3J0aW5nIGlzIG1hbmRhdG9yeSBmb3IgZWFjaCBmYWNpbGl0eSBwZXJmb3JtaW5nIG1vcmUgdGhhbiAyMDAgZGVsaXZlcmllcyBwZXIgeWVhciwgd2hpY2ggd2UgY2FuIHZlcmlmeS4NCg0KDQojIyBCaXJ0aCBSYXRlIGJ5IEhvc3BpdGFsDQoNCmBgYHtyLCBhbm51YWwtaG9zcGl0YWwtYmlydGhzfQ0KDQphbm51YWxfaG9zcGl0YWxfYmlydGhzX2RmIDwtIHByZWduYW5jeV9kZiAlPiUgDQogIGZpbHRlcihNZWFzdXJlLk5hbWUgPT0gJ1RvdGFsIEJpcnRocycsIEhvc3BpdGFsLk5hbWUgIT0gYygnU3RhdGV3aWRlJywgJ1Jlc3Qgb2YgU3RhdGUnKSkgJT4lICNzZWxlY3QgdG90YWwgc3RhdGlzdGljcw0KICBzZWxlY3QoWWVhciwgSG9zcGl0YWwuTmFtZSwgSG9zcGl0YWwuQ291bnR5LCBDb3VudCkgJT4lDQogIGdyb3VwX2J5KFllYXIsIEhvc3BpdGFsLk5hbWUpICU+JQ0KICBtdXRhdGUoYW5udWFsX2hvc3BpdGFsX2JpcnRocyA9IHN1bShDb3VudCkpICU+JQ0KICBtdXRhdGUoYWJvdmVfMjAwID0gYW5udWFsX2hvc3BpdGFsX2JpcnRocyA+MjAwKSAgJT4lDQogIGFycmFuZ2UoYW5udWFsX2hvc3BpdGFsX2JpcnRocykNCg0KDQpoZWFkKGFubnVhbF9ob3NwaXRhbF9iaXJ0aHNfZGYpDQoxMDAqcm91bmQobWVhbihhbm51YWxfaG9zcGl0YWxfYmlydGhzX2RmJGFib3ZlXzIwMCksMykgI3BlcmNlbnQgb2YgYW5udWFsIHJlcG9ydHMgZ3JlYXRlciB0aGFuIDIwMCBjaGlsZGJpcnRocw0KMTAwKnJvdW5kKHN1bShhbm51YWxfaG9zcGl0YWxfYmlydGhzX2RmW2FubnVhbF9ob3NwaXRhbF9iaXJ0aHNfZGYkYWJvdmVfMjAwID09IEZBTFNFLF1bWyJhbm51YWxfaG9zcGl0YWxfYmlydGhzIl1dKS9zdW0oYW5udWFsX2hvc3BpdGFsX2JpcnRoc19kZltbJ2FubnVhbF9ob3NwaXRhbF9iaXJ0aHMnXV0pLDMpICNwZXJjZW50IG9mIHN0YXRld2lkZSBiaXJ0aHMgYXQgbG93LWNvdW50IGhvc3BpdGFscw0KDQpgYGANCg0KTG9va2luZyBhdCB0aGUgbG93ZXN0IHllYXJzLCBpdCBhcHBlYXJzIHRoYXQgdGhlIG1pbmltdW0gcmVwb3J0cyBzb21ldGltZXMgaXMgbG93ZXIgdGhhbiAyMDAuIFRoZXNlIGNhc2VzIHJlcHJlc2VudCBsZXNzIHRoYW4gNSUgb2YgdG90YWwgaG9zcGl0YWwgcmVwb3J0cyBhbmQgMC4yJSBvZiB0aGUgbnVtYmVyIG9mIGJpcnRocy4gT25lIHBsYXVzaWJsZSBleHBsYW5hdGlvbiBmb3IgdGhlc2UgZXhjZXB0aW9ucyBhcmUgaG9zcGl0YWxzIG5vIGxvbmdlciBvZmZlcmluZyBwZXJpbmF0YWwgc2VydmljZXMuDQoNCg0KIyMgSG9zcGl0YWxzIGJ5IENvdW50eSwgUmVnaW9uLCBhbmQgQm9yb3VnaA0KDQpgYGB7ciwgY291bnR5LWhvc3BpdGFscy1oaXN0b2dyYW19DQoNCmFubnVhbF9ob3NwaXRhbF9iaXJ0aHNfZGYgJT4lDQogIGdyb3VwX2J5KEhvc3BpdGFsLkNvdW50eSkgJT4lDQogIHN1bW1hcml6ZShuX2hvc3BpdGFscyA9IGxlbmd0aCh1bmlxdWUoSG9zcGl0YWwuTmFtZSkpKSAlPiUNCiAgYXJyYW5nZShkZXNjKG5faG9zcGl0YWxzKSkgJT4lDQogIGdncGxvdChhZXMobl9ob3NwaXRhbHMpKSArDQogIGdlb21fYmFyKCkgKw0KICBsYWJzKHRpdGxlID0gJ0hpc3RvZ3JhbSwgTnVtYmVyIG9mIEhvc3BpdGFscyBpbiBlYWNoIENvdW50eScsIHggPSAnTnVtYmVyIG9mIEhvc3BpdGFscycsIHkgPSAnQ291bnQnKQ0KICANCg0KDQoNCmBgYA0KDQpPbmUgb2JzdGFjbGUgdG8gZHJhd2luZyBjb25jbHVzaW9ucyBieSBsb2NhdGlvbiBvZiB0aGUgaG9zcGl0YWwgaXMgdGhlIG1ham9yaXR5IG9mIGNvdW50aWVzIG9ubHkgaW5jbHVkZSBvbmUgb3IgdHdvIGhvc3BpdGFscyBvZmZlcmluZyBwZXJpbmF0YWwgc2VydmljZXMuIE9uZSB3YXkgdG8gYXZvaWQgdGhpcyBpcyB0byByZWNvZGUgdGhlIGRhdGFzZXQgdG8gaW5jbHVkZSB0aGUgMTAgZXN0YWJsaXNoZWQgcmVnaW9ucyBvZiBOZXcgWW9yayBTdGF0ZS4gVGhpcyB3aWxsIGFsc28gcmVtb3ZlIHRoZSAncmVzdCBvZiBzdGF0ZScgYW5kICdTdGF0ZXdpZGUnIHN0YXRpc3RpY3MgZnJvbSB0aGUgZGF0YXNldCBhcyBwcmV2aW91c2x5IG9taXR0ZWQuDQoNCmBgYHtyLCBwcmVnLWZpeH0NCnByZWduYW5jeV9kZiRIb3NwaXRhbC5Db3VudHkgPC0gc3RyX3RvX3RpdGxlKHByZWduYW5jeV9kZiRIb3NwaXRhbC5Db3VudHkpICN1bmNhcGl0YWxpemUgYWxsIGJ1dCB0aGUgZmlyc3QgbGV0dGVyIG9mIGVhY2ggY291bnR5DQoNCnByZWduYW5jeV9maXhfMSA8LSBwcmVnbmFuY3lfZGYgJT4lDQogIGZpbHRlcihIb3NwaXRhbC5Db3VudHkgJWluJSBjKCdBbGJhbnknLCAnQ29sdW1iaWEnLCAnR3JlZW5lJywgJ1JlbnNzZWxhZXInLCAnU2FyYXRvZ2EnLCAnU2NoZW5lY3RhZHknLCAnV2FycmVuJywgJ1dhc2hpbmd0b24nKSkgJT4lICNjcmVhdGUgYSBuZXcgJ1JlZ2lvbicgY29sdW1uDQogIG11dGF0ZShSZWdpb24gPSAnQ2FwaXRhbCBSZWdpb24nKQ0KcHJlZ25hbmN5X2ZpeF8yIDwtIHByZWduYW5jeV9kZiAlPiUNCiAgZmlsdGVyKEhvc3BpdGFsLkNvdW50eSAlaW4lIGMoJ0NheXVnYScsICdDb3J0bGFuZCcsICdNYWRpc29uJywgJ09ub25kYWdhJywgJ09zd2VnbycpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdDZW50cmFsIE5ldyBZb3JrJykNCnByZWduYW5jeV9maXhfMyA8LSBwcmVnbmFuY3lfZGYgJT4lDQogIGZpbHRlcihIb3NwaXRhbC5Db3VudHkgJWluJSBjKCdHZW5lc3NlZScsICdMaXZpbmdzdG9uJywgJ01vbnJvZScsICdPbnRhcmlvJywgJ09ybGVhbnMnLCAnU2VuZWNhJywgJ1dheW5lJywgJ1d5b21pbmcnLCAnWWF0ZXMnKSkgJT4lDQogIG11dGF0ZShSZWdpb24gPSAnRmluZ2VyIExha2VzJykNCnByZWduYW5jeV9maXhfNCA8LSBwcmVnbmFuY3lfZGYgJT4lDQogIGZpbHRlcihIb3NwaXRhbC5Db3VudHkgJWluJSBjKCdOYXNzYXUnLCAnU3VmZm9saycpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdMb25nIElzbGFuZCcpDQpwcmVnbmFuY3lfZml4XzUgPC0gcHJlZ25hbmN5X2RmICU+JQ0KICBmaWx0ZXIoSG9zcGl0YWwuQ291bnR5ICVpbiUgYygnRHVjaGVzcycsICdPcmFuZ2UnLCAnUHV0bmFtJywgJ1JvY2tsYW5kJywgJ1N1bGxpdmFuJywgJ1Vsc3RlcicsICdXZXN0Y2hlc3RlcicpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdNaWQtSHVkc29uJykNCnByZWduYW5jeV9maXhfNiA8LSBwcmVnbmFuY3lfZGYgJT4lDQogIGZpbHRlcihIb3NwaXRhbC5Db3VudHkgJWluJSBjKCdGdWx0b24nLCAnSGVya2ltZXInLCAnTW9udGdvbWVyeScsICdPbmVpZGEnLCAnT3RzZWdvJywgJ1NjaG9oYXJpZScpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdNb2hhd2sgVmFsbGV5JykNCnByZWduYW5jeV9maXhfNyA8LSBwcmVnbmFuY3lfZGYgJT4lDQogIGZpbHRlcihIb3NwaXRhbC5Db3VudHkgJWluJSBjKCdCcm9ueCcsICdLaW5ncycsICdOZXcgWW9yaycsICdRdWVlbnMnLCAnUmljaG1vbmQnKSkgJT4lDQogIG11dGF0ZShSZWdpb24gPSAnTmV3IFlvcmsgQ2l0eScpDQpwcmVnbmFuY3lfZml4XzggPC0gcHJlZ25hbmN5X2RmICU+JQ0KICBmaWx0ZXIoSG9zcGl0YWwuQ291bnR5ICVpbiUgYygnQ2xpbnRvbicsICdFc3NleCcsICdGcmFua2xpbicsICdIYW1pbHRvbicsICdKZWZmZXJzb24nLCAnTGV3aXMnLCAnU2FpbnQgTGF3cmVuY2UnKSkgJT4lDQogIG11dGF0ZShSZWdpb24gPSAnTm9ydGggQ291bnRyeScpDQpwcmVnbmFuY3lfZml4XzkgPC0gcHJlZ25hbmN5X2RmICU+JQ0KICBmaWx0ZXIoSG9zcGl0YWwuQ291bnR5ICVpbiUgYygnQnJvb21lJywgJ0NoZW11bmcnLCAnQ2hlbmFuZ28nLCAnRGVsYXdhcmUnLCAnU2NodXlsZXInLCAnU3RldWJlbicsICdUaW9nYScsICdUb21wa2lucycpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdTb3V0aGVybiBUaWVyJykNCnByZWduYW5jeV9maXhfMTAgPC0gcHJlZ25hbmN5X2RmICU+JQ0KICBmaWx0ZXIoSG9zcGl0YWwuQ291bnR5ICVpbiUgYygnQWxsZWdhbnknLCAnQ2F0dGFyYXVndXMnLCAnQ2hhdXRhdXF1YScsICdOaWFncmEnKSkgJT4lDQogIG11dGF0ZShSZWdpb24gPSAnV2VzdGVybiBOZXcgWW9yaycpDQpwcmVnbmFuY3lfZml4IDwtIHJiaW5kKHByZWduYW5jeV9maXhfMSwgcHJlZ25hbmN5X2ZpeF8yLCBwcmVnbmFuY3lfZml4XzMsIHByZWduYW5jeV9maXhfNCwgcHJlZ25hbmN5X2ZpeF81LCBwcmVnbmFuY3lfZml4XzYsIHByZWduYW5jeV9maXhfNywgcHJlZ25hbmN5X2ZpeF84LCBwcmVnbmFuY3lfZml4XzksIHByZWduYW5jeV9maXhfMTApICNiaW5kIFJlZ2lvbmFsIGRhdGFmcmFtZXMgdG8gYSBuZXcgZml4ZWQgZGF0YWZyYW1lDQoNCg0KDQpgYGANCg0KYGBge3IsIHJlZ2lvbmFsLWJpcnRoc30NCg0KcHJlZ25hbmN5X2ZpeCAlPiUNCiAgZ3JvdXBfYnkoUmVnaW9uKSAlPiUNCiAgZmlsdGVyKFllYXIgPT0gMjAxNywgQ2F0ZWdvcnkgPT0gJ0FsbCBEZWxpdmVyaWVzJykgJT4lDQogIHN1bW1hcml6ZShuX2hvc3BpdGFscyA9IGxlbmd0aCh1bmlxdWUoSG9zcGl0YWwuTmFtZSkpKSAlPiUNCiAgZ2dwbG90KGFlcyh4ID0gUmVnaW9uLCB5ID0gbl9ob3NwaXRhbHMpKSArDQogIGdlb21fY29sKCkgKw0KICBjb29yZF9mbGlwKCkgKw0KICBsYWJzKHRpdGxlID0gJ051bWJlciBvZiBIb3NwaXRhbHMgcGVyIFJlZ2lvbiwgMjAxNycsIHkgPSAnTnVtYmVyIG9mIEhvc3BpdGFscycpDQoNCg0KYGBgDQoNCmBgYHtyLCBib3JvdWdoLWJpcnRoc30NCg0KcHJlZ25hbmN5X2ZpeCAlPiUNCiAgZ3JvdXBfYnkoSG9zcGl0YWwuQ291bnR5KSAlPiUNCiAgZmlsdGVyKFllYXIgPT0gMjAxNywgQ2F0ZWdvcnkgPT0gJ0FsbCBEZWxpdmVyaWVzJywgUmVnaW9uID09ICdOZXcgWW9yayBDaXR5JykgJT4lDQogIHN1bW1hcml6ZShuX2hvc3BpdGFscyA9IGxlbmd0aCh1bmlxdWUoSG9zcGl0YWwuTmFtZSkpKSAlPiUNCiAgZ2dwbG90KGFlcyh4ID0gSG9zcGl0YWwuQ291bnR5LCB5ID0gbl9ob3NwaXRhbHMpKSArDQogIGdlb21fY29sKCkgKw0KICBzY2FsZV95X2NvbnRpbnVvdXMoYnJlYWtzID0gYygyLCA0LCA2LCA4ICwxMCwgMTIpKSArDQogIGNvb3JkX2ZsaXAoKSArDQogIGxhYnModGl0bGUgPSAnTnVtYmVyIG9mIEhvc3BpdGFscyBwZXIgTllDIEJvcm91Z2gsIDIwMTcnLCB5ID0gJ051bWJlciBvZiBIb3NwaXRhbHMnLCB4ID0gJ0Jvcm91Z2gnKSANCg0KDQoNCg0KYGBgDQoNCkdyb3VwaW5nIGJ5IHJlZ2lvbiBvZmZlcnMgYSBsYXJnZXIgcG9vbCBvZiBob3NwaXRhbHMgdG8gY29tcGFyZSwgYWx0aG91Z2ggTmV3IFlvcmsgQ2l0eSBpcyBhIGNsZWFyIG91dGxpZXIgZm9yIHRoZSBudW1iZXIgb2YgaG9zcGl0YWxzLiBMb29raW5nIG9ubHkgYXQgZWFjaCBOWUMgYm9yb3VnaCBvZmZlcnMgdGhlIGluc2lnaHQgdGhhdCBob3NwaXRhbHMgaW4gdGhlIGNpdHkgYXJlIGRpc3RyaWJ1dGVkIGJldHdlZW4gdGhlIGZpdmUgYm9yb3VnaHMsIGFsdGhvdWdoIFN0YXRlbiBJc2xhbmQgaXMgYSBjbGVhZXIgbWluaW11bS4NCg0KDQojIyBCaXJ0aCBNZWFzdXJlcw0KDQoNCiMjIyBXaGVyZSBhcmUgQmVpbmcgQm9ybj8NCg0KVGhlIGltbWVkaWF0ZSBxdWVzdGlvbiBmb3IgbWFueSBpcyB3aGVyZSBhcmUgTmV3IFlvcmsgU3RhdGUncyBiYWJpZXMgYmVpbmcgYm9ybj8gVG8gYW5zd2VyIHRoaXMgcXVlc3Rpb24gaW5pdGlhbGx5LCBJJ2xsIGxvb2sgYXQgdGhlIHJhdyB0b3RhbHMsIHdpdGhvdXQgY29uc2lkZXJhdGlvbiBvZiBleGlzdGluZyBwb3B1bGF0aW9uIGluIHRoZSByZWdpb24uDQoNCg0KYGBge3IsIGJpcnRoLXRvdGFsc30NCg0KcmVnaW9uYWxfdG90YWxzIDwtIHByZWduYW5jeV9maXggJT4lDQogIGZpbHRlcihNZWFzdXJlLk5hbWUgPT0gJ1RvdGFsIEJpcnRocycpICU+JSAjdXNlZnVsIGRhdGFmcmFtZSB3aXRoIGFubnVhbCBiaXJ0aCB0b3RhbHMgZm9yIGVhY2ggcmVnaW9uDQogIHNlbGVjdChZZWFyLCBSZWdpb24sIENvdW50KSAlPiUNCiAgZ3JvdXBfYnkoUmVnaW9uLCBZZWFyKSAlPiUNCiAgc3VtbWFyaXplKHRvdGFsX2JpcnRocyA9IHN1bShDb3VudCkpDQoNCg0KcmVnaW9uYWxfdG90YWxzJFJlZ2lvbiA8LSBmYWN0b3IocmVnaW9uYWxfdG90YWxzJFJlZ2lvbiwgb3JkZXJlZCA9IFRSVUUsIGxldmVscyA9IGMoJ05ldyBZb3JrIENpdHknLCAnTG9uZyBJc2xhbmQnLCAnTWlkLUh1ZHNvbicsICdGaW5nZXIgTGFrZXMnLCAnQ2FwaXRhbCBSZWdpb24nLCAnQ2VudHJhbCBOZXcgWW9yaycsICdTb3V0aGVybiBUaWVyJywgJ01vaGF3ayBWYWxsZXknLCAnTm9ydGggQ291bnRyeScsICdXZXN0ZXJuIE5ldyBZb3JrJykpDQogIA0KcmVnaW9uYWxfdG90YWxzICU+JQ0KICBnZ3Bsb3QoYWVzKHggPSBZZWFyLCB5ID0gdG90YWxfYmlydGhzLCBmaWxsID0gUmVnaW9uKSkrDQogIGdlb21fY29sKCkgICsNCiAgbGFicyh0aXRsZSA9ICdOZXcgWW9yayBTdGF0ZSBCaXJ0aHMgYnkgUmVnaW9uLCAyMDA4IC0gMjAxNycsIHkgPSAnIyBvZiBCaXJ0aHMnKSArDQogIHNjYWxlX3hfY29udGludW91cyhicmVha3MgPSBjKDIwMDgsMjAxMCwyMDEyLDIwMTQsMjAxNiwyMDE4KSkgDQoNCmBgYA0KDQpVbmZvcnR1bmF0ZWx5LCB0aGlzIHRyZWF0bWVudCBvZiB0b3RhbCBiaXJ0aHMgZG9lcyBub3Qgb2ZmZXIgdmVyeSBtdWNoIGluc2lnaHQgaW50byBhbnkgcmVnaW9uYWwgZGlmZmVyZW5jZXMuIEhvd2V2ZXIsIGl0IGlzIG5vdGFibGUgdGhhdCBiaXJ0aHMgb3ZlcmFsbCBhcHBlYXIgdG8gYmUgZGVjcmVhc2luZy4gVG8gYmV0dGVyIHVuZGVyc3RhbmQgdGhlIGJpcnRoIHJhdGUsIEknbGwgYmUgdXNpbmcgYSBzZWNvbmQgZGF0YWZyYW1lIHVzaW5nIE5ZIHN0YXRlIGNlbnN1cyBwcm9qZWN0aW9ucyB0byBlc3RpbWF0ZSBwb3B1bGF0aW9uLg0KDQpgYGB7ciwgbnktcG9wfQ0KDQpueV9wb3AgPC0gcmVhZC5jc3YoJ2h0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9oaWxsdDUvREFUQTYwOC9tYWluL0FubnVhbF9Qb3B1bGF0aW9uX0VzdGltYXRlc19mb3JfTmV3X1lvcmtfU3RhdGVfYW5kX0NvdW50aWVzX19CZWdpbm5pbmdfMTk3MCcpICNsb2FkIGNlbnN1cyBkYXRhDQoNCm55X3BvcF8wOF8wOSA8LSBueV9wb3AgJT4lDQogIGZpbHRlcihQcm9ncmFtLlR5cGUgPT0gJ0ludGVyY2Vuc2FsIFBvcHVsYXRpb24gRXN0aW1hdGUnICYgKFllYXIgPT0gMjAwOCB8IFllYXIgPT0gMjAwOSkpICNpbnRlcmNlbnNhbCBpcyB0aGUgbW9zdCBhY2N1cmF0ZSBwcm9qZWN0aW9uIG9mIHBvcHVsYXRpb24sIGFuZCBjb25zaWRlcnMgdGhlIDIwMDAgYW5kIDIwMTAgY2Vuc3VzIHJlc3VsdHMNCg0KbnlfcG9wXzEwIDwtIG55X3BvcCAlPiUNCiAgZmlsdGVyKFByb2dyYW0uVHlwZSA9PSAnQ2Vuc3VzIEJhc2UgUG9wdWxhdGlvbicgJiBZZWFyID09IDIwMTApICNhY3R1YWwgMjAxMCBjZW5zdXMgcmVzdWx0cw0KICANCm55X3BvcF8xMTE3IDwtIG55X3BvcCAlPiUNCiAgZmlsdGVyKFByb2dyYW0uVHlwZSA9PSAnUG9zdGNlbnNhbCBQb3B1bGF0aW9uIEVzdGltYXRlJyAmIFllYXIgPiAyMDEwICYgWWVhciA8IDIwMTgpICNlc3RpbWF0aW9uIG9mIHBvcHVsYXRpb24gZnJvbSAyMDEwIGNlbnN1cw0KDQpueV9wb3BfMDhfMTcgPC0gcmJpbmQobnlfcG9wXzA4XzA5LCBueV9wb3BfMTAsIG55X3BvcF8xMTE3KQ0KDQoNCm55X3BvcF8wOF8xNyAlPiUNCiAgZmlsdGVyKEdlb2dyYXBoeSAhPSAnTmV3IFlvcmsgU3RhdGUnKSAlPiUNCiAgZ3JvdXBfYnkoWWVhcikgJT4lDQogIHN1bW1hcml6ZSh0b3RhbF9wb3AgPSBzdW0oUG9wdWxhdGlvbikpICU+JQ0KICBnZ3Bsb3QoYWVzKHggPSBZZWFyLCB5ID10b3RhbF9wb3ApKSArDQogIGdlb21fcG9pbnQoKSArDQogIGdlb21fbGluZSgpICsNCiAgbGFicyh0aXRsZSA9ICdOZXcgWW9yayBTdGF0ZSBQb3B1bGF0aW9uLCAyMDA4IC0gMjAxNycsIHkgPSAnRXN0aW1hdGVkIFBvcHVsYXRpb24nKSArDQogIHNjYWxlX3hfY29udGludW91cyhicmVha3MgPSBjKDIwMDgsMjAxMCwyMDEyLDIwMTQsMjAxNiwyMDE4KSkgKw0KICB5bGltKGMoMTgwMDAwMDAsMjEwMDAwMDApKQ0KDQpgYGANCg0KSXQgYXBwZWFycyB0aGF0IHRvdGFsIHBvcHVsYXRpb24gZ3Jvd3RoIGhhcyBhbHNvIGRlY3JlYXNlZCBkdXJpbmcgdGhpcyBwZXJpb2QsIHdpdGggc3RhdGUgcG9wdWxhdGlvbiBzdXBwb3NlZGx5IHJlYWNoaW5nIGl0cyBtYXhpbXVtIGluIDIwMTUuIE5leHQsIGxldHMgdXNlIHRoZXNlIGVzdGltYXRlcyB0byBnZXQgdGhlIHBlciBjYXBpdGFsIGJpcnRoIHJhdGUuDQoNCmBgYHtyLCBueS1wb3AtcmVnaW9ufQ0KDQojIyByZWNvZGluZyB0aGUgcG9wdWxhdGlvbiBkYXRhIHVzaW5nIHRoZSBzYW1lIG1ldGhvZCBhcyB1c2VkIGluIHRoZSBmaXJzdCBkYXRhZnJhbWUNCm55X3BvcF8wOF8xN18xIDwtIG55X3BvcF8wOF8xNyAlPiUNCiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ0FsYmFueScsICdDb2x1bWJpYScsICdHcmVlbmUnLCAnUmVuc3NlbGFlcicsICdTYXJhdG9nYScsICdTY2hlbmVjdGFkeScsICdXYXJyZW4nLCAnV2FzaGluZ3RvbicpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdDYXBpdGFsIFJlZ2lvbicpDQpueV9wb3BfMDhfMTdfMiA8LSBueV9wb3BfMDhfMTcgJT4lDQogIGZpbHRlcihHZW9ncmFwaHkgJWluJSBjKCdDYXl1Z2EnLCAnQ29ydGxhbmQnLCAnTWFkaXNvbicsICdPbm9uZGFnYScsICdPc3dlZ28nKSkgJT4lDQogIG11dGF0ZShSZWdpb24gPSAnQ2VudHJhbCBOZXcgWW9yaycpDQpueV9wb3BfMDhfMTdfMyA8LSBueV9wb3BfMDhfMTcgJT4lDQogIGZpbHRlcihHZW9ncmFwaHkgJWluJSBjKCdHZW5lc3NlZScsICdMaXZpbmdzdG9uJywgJ01vbnJvZScsICdPbnRhcmlvJywgJ09ybGVhbnMnLCAnU2VuZWNhJywgJ1dheW5lJywgJ1d5b21pbmcnLCAnWWF0ZXMnKSkgJT4lDQogIG11dGF0ZShSZWdpb24gPSAnRmluZ2VyIExha2VzJykNCm55X3BvcF8wOF8xN180IDwtIG55X3BvcF8wOF8xNyAlPiUNCiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ05hc3NhdScsICdTdWZmb2xrJykpICU+JQ0KICBtdXRhdGUoUmVnaW9uID0gJ0xvbmcgSXNsYW5kJykNCm55X3BvcF8wOF8xN181IDwtIG55X3BvcF8wOF8xNyAlPiUNCiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ0R1Y2hlc3MnLCAnT3JhbmdlJywgJ1B1dG5hbScsICdSb2NrbGFuZCcsICdTdWxsaXZhbicsICdVbHN0ZXInLCAnV2VzdGNoZXN0ZXInKSkgJT4lDQogIG11dGF0ZShSZWdpb24gPSAnTWlkLUh1ZHNvbicpDQpueV9wb3BfMDhfMTdfNiA8LSBueV9wb3BfMDhfMTcgJT4lDQogIGZpbHRlcihHZW9ncmFwaHkgJWluJSBjKCdGdWx0b24nLCAnSGVya2ltZXInLCAnTW9udGdvbWVyeScsICdPbmVpZGEnLCAnT3RzZWdvJywgJ1NjaG9oYXJpZScpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdNb2hhd2sgVmFsbGV5JykNCm55X3BvcF8wOF8xN183IDwtIG55X3BvcF8wOF8xNyAlPiUNCiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ0Jyb254JywgJ0tpbmdzJywgJ05ldyBZb3JrJywgJ1F1ZWVucycsICdSaWNobW9uZCcpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdOZXcgWW9yayBDaXR5JykNCm55X3BvcF8wOF8xN184IDwtIG55X3BvcF8wOF8xNyAlPiUNCiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ0NsaW50b24nLCAnRXNzZXgnLCAnRnJhbmtsaW4nLCAnSGFtaWx0b24nLCAnSmVmZmVyc29uJywgJ0xld2lzJywgJ1NhaW50IExhd3JlbmNlJykpICU+JQ0KICBtdXRhdGUoUmVnaW9uID0gJ05vcnRoIENvdW50cnknKQ0KbnlfcG9wXzA4XzE3XzkgPC0gbnlfcG9wXzA4XzE3ICU+JQ0KICBmaWx0ZXIoR2VvZ3JhcGh5ICVpbiUgYygnQnJvb21lJywgJ0NoZW11bmcnLCAnQ2hlbmFuZ28nLCAnRGVsYXdhcmUnLCAnU2NodXlsZXInLCAnU3RldWJlbicsICdUaW9nYScsICdUb21wa2lucycpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdTb3V0aGVybiBUaWVyJykNCm55X3BvcF8wOF8xN18xMCA8LSBueV9wb3AgJT4lDQogIGZpbHRlcihHZW9ncmFwaHkgJWluJSBjKCdBbGxlZ2FueScsICdDYXR0YXJhdWd1cycsICdDaGF1dGF1cXVhJywgJ05pYWdyYScpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdXZXN0ZXJuIE5ldyBZb3JrJykNCg0KbnlfcG9wX2ZpeCA8LSByYmluZChueV9wb3BfMDhfMTdfMSwgbnlfcG9wXzA4XzE3XzIsIG55X3BvcF8wOF8xN18zLCBueV9wb3BfMDhfMTdfNCwgbnlfcG9wXzA4XzE3XzUsIG55X3BvcF8wOF8xN182LCBueV9wb3BfMDhfMTdfNywgbnlfcG9wXzA4XzE3XzgsIG55X3BvcF8wOF8xN185LCBueV9wb3BfMDhfMTdfMTApDQoNCmBgYA0KDQpgYGB7ciwgcmVnaW9uLXBvcH0NCg0KDQpyZWdpb25fcG9wIDwtIG55X3BvcF9maXggJT4lDQogIGZpbHRlcihZZWFyICVpbiUgYygyMDA4OjIwMTcpKSAgJT4lDQogIGdyb3VwX2J5KFJlZ2lvbiwgWWVhcikgJT4lDQogIHN1bW1hcml6ZShyZWdpb25fcG9wdWxhdGlvbiA9IHN1bShQb3B1bGF0aW9uKSkNCg0KcmVnaW9uX3BvcCRSZWdpb24gPC0gZmFjdG9yKHJlZ2lvbl9wb3AkUmVnaW9uLCBvcmRlcmVkID0gVFJVRSwgbGV2ZWxzID0gYygnTmV3IFlvcmsgQ2l0eScsICdMb25nIElzbGFuZCcsICdNaWQtSHVkc29uJywgJ0ZpbmdlciBMYWtlcycsICdDYXBpdGFsIFJlZ2lvbicsICdDZW50cmFsIE5ldyBZb3JrJywgJ1NvdXRoZXJuIFRpZXInLCAnTW9oYXdrIFZhbGxleScsICdOb3J0aCBDb3VudHJ5JywgJ1dlc3Rlcm4gTmV3IFlvcmsnKSkNCiNyZWZhY3RvciBieSBwb3B1bGF0aW9uIHNpemUNCg0KDQpgYGANCg0KYGBge3IsIHBlci1jYXBpdGEtYmlydGhzfQ0KDQoNCnJlZ2lvbmFsX3Blcl9jYXBpdGEgPC0gY2JpbmQocmVnaW9uYWxfdG90YWxzLCByZWdpb25fcG9wWywzXSkgJT4lDQogIG11dGF0ZShiaXJ0aHNfcGVyX2NhcGl0YSA9IDEwMDAqdG90YWxfYmlydGhzL3JlZ2lvbl9wb3B1bGF0aW9uKSAjYmlydGhzIHBlciAxMDAwIHBvcHVsYXRpb24NCg0KcmVnaW9uYWxfcGVyX2NhcGl0YSRSZWdpb24gPC0gYXMuY2hhcmFjdGVyKHJlZ2lvbmFsX3Blcl9jYXBpdGEkUmVnaW9uKQ0KDQpyZWdpb25hbF9wZXJfY2FwaXRhICU+JQ0KICBmaWx0ZXIoYmlydGhzX3Blcl9jYXBpdGEgPiA1KSAlPiUgIyBvbWl0dGVkIGEgc2luZ2xlIHZhbHVlIGZvciBXZXN0ZXJuIE5ZIDIwMTAgYmVjYXVzZSBvZiBvdXRsaWVyIGNlbnN1cyB2YWx1ZQ0KICBnZ3Bsb3QoYWVzKHggPSBZZWFyLCB5ID0gYmlydGhzX3Blcl9jYXBpdGEsIGNvbCA9IFJlZ2lvbikpICsNCiAgZ2VvbV9wb2ludCgpICsNCiAgZ2VvbV9saW5lKCkgKw0KICBsYWJzKHRpdGxlID0gJ05ldyBZb3JrIFN0YXRlIEJpcnRoIFJhdGUgYnkgUmVnaW9uLCAyMDA4IC0gMjAxNycsIHkgPSAnQmlydGhzIHBlciAxLDAwMCBQb3B1bGF0aW9uJykgKw0KICBzY2FsZV94X2NvbnRpbnVvdXMoYnJlYWtzID0gYygyMDA4LDIwMTAsMjAxMiwyMDE0LDIwMTYsMjAxOCkpDQoNCnByZWduYW5jeV9maXggJT4lDQogIGZpbHRlcihSZWdpb24gPT0gJ05vcnRoIENvdW50cnknLCBZZWFyID09IDIwMTcsIE1lYXN1cmUuTmFtZSA9PSAnVG90YWwgQmlydGhzJykgJT4lDQogIHNlbGVjdChIb3NwaXRhbC5OYW1lKSANCg0KYGBgDQoNCg0KQWZ0ZXIgY29uc2lkZXJpbmcgdGhlIHVuZGVybHlpbmcgcG9wdWxhdGlvbiBvZiBlYWNoIHJlZ2lvbiwgTmV3IFlvcmsgQ2l0eSByZW1haW5zIHRoZSBhcmVhIHdpdGggdGhlIGxhcmdlc3QgYmlydGggcmF0ZSwgd2hpbGUgdGhlIGxvd2VzdCBwb3B1bGF0aW9uIHJlZ2lvbnMgaGFkIHNvbWUgb2YgdGhlIGxvd2VzdCBiaXJ0aCByYXRlcy4gVGhlIG9uZSBzdXJwcmlzaW4gcmVzdWx0IGlzIHRoZSBOb3J0aCBDb3VudHJ5IHJlZ2lvbiBoYXZpbmcgYSBtaWRkbGUgb2YgdGhlIHBhY2sgYmlydGggcmF0ZS5UaGUgcmVhc29uIGZvciB0aGlzIGlzIG5vdCBvYnZpb3VzLCBhbHRob3VnaCBnZW9ncmFwaGljYWxseSB0aGlzIHJlZ2lvbiBpcyB2ZXJ5IGxhcmdlIHdpdGggbG93IHBvdWxhdGlvbiBkZW5zaXR5IGFuZCBsaWtlbHkgaGFzIHBsZW50eSBvZiByb29tIGZvciBwb3B1bGF0aW9uIGdyb3d0aC4gQW5vdGhlciB0aGVvcnkgd29ydGggY29uc2lkZXJpbmcgaXMgYXZhaWxhYmlsaXR5IG9mIG5vbi1ob3NwaXRhbCBiaXJ0aGluZyBvcHRpb25zLiBSdXJhbCBhcmVhcyB0ZW5kIHRvIGF0dHJhY3QgZmV3ZXIgbWVkaWNhbCBwcm9mZXNzaW9uYWwgbGlrZSBvYnN0ZXRyaWNpYW4tZ3luZWNvbG9neXN0cyAoT0IvR1lOJ3MpLCBzbyBpdCdzIGEgZHJhd2JhY2sgb2YgdGhlc2UgZGF0YSB0aGF0IG91dC1vZi1ob3NwaXRhbCBiaXJ0aHMgYXJlIG5vdCBlc3RpbWF0ZWQuIFdlIHdpbGwgbG9vayBpbiB0aGUgbmV4dCBzZWN0aW9uIGF0IHRoZSBwcmVzZW5jZSBvZiBtaWQtbGV2ZWwgcHJhY3RpdGlvbmVycyBpbiB0aGVzZSBhcmVhcy4NCg0KDQpBbHNvIG5vdGFibGUgaXMgc3RhZ25hbnQgb3IgZGVjcmVhc2luZyBiaXJ0aCByYXRlcyBhY3Jvc3MgdGhlIHdob2xlIHN0YXRlLiBUaGlzIHRyZWF0bWVudCBvZiB0aGUgZGF0YSBzdXBwb3J0cyB0aGUgY29uY2x1c2lvbiB0aGF0IGJhYmllcyBhcmUgYmVpbmcgYm9ybiB3aGVyZSB0aGUgbW9zdCBwZW9wbGUgbGl2ZSwgbmFtZWx5IE5ldyBZb3JrIENpdHkuIEFsc28gZnJvbSBvdXIgdW5kZXJzdGFuZGluZyBvZiB0aGUgbnVtYmVyIG9mIGhvc3BpdGFscywgdGhpcyBhcmVhIGhhcyBzb21lIG9mIHRoZSBoaWdoZXN0IGRlbnNpdHkgb2YgZmFjaWxpdGllcyBhbmQgbWF5IGF0dHJhY3QgZmFtaWxpZXMgZnJvbSBvdGhlciByZWdpb25zIGZvciBhZHZhbmNlZCBjYXJlIG9yIGluZHVjZWQgYmlydGhzLg0KDQoNCiMjIyBDaGlsZGJpcnRoIGFuZCBNaWR3aXZlcw0KDQpNaWR3aXZlcyBhcmUgc3BlY2lhbGl6ZWQgaGVhbHRoY2FyZSBwcm9mZXNzaW9uYWxzIHdob3NlIHNjb3BlIG9mIHByYWN0aWNlIGluY2x1ZGVzIHByZW5hdGFsIGFuZCBwZXJpbmF0YWwgY2FyZS4gVGhleSBhcmUgYWJsZSB0byBwcmFjdGljZSBpbmRlcGVuZGVudGx5IHdoaWxlIG92ZXJzZWVpbmcgbG93LXJpc2sgcHJlZ25hbmNpZXMgYW5kIG1vcmUgY29tcGxpY2F0ZWQgcHJlc2VudGF0aW9ucyBsaWtlIGJyZWVjaCBiaXJ0aHMsIGJ1dCBjYW4gYWxzbyBjb2xsYWJvcmF0aXZlbHkgd2l0aCBvYnN0ZXRyaWNpYW5zIGFuZCBudXJzZXMgdG8gYXNzaXN0ZWQgaW4gY29tcGxleCBiaXJ0aHMuIFRoaXMgaXMgYSByZWxldmFudCBzdGF0aXN0aWMgd2hlbiBjaG9vc2luZyBhIGhvc3BpdGFsIGJlY2F1c2UgaXQgbWF5IGRldGVybWluZSB3aGljaCBoZWFsdGhjYXJlIHByb2Zlc3Npb25hbCB3aWxsIGJlIG92ZXJzZWVpbmcgYSBkZWxpdmVyeS4gRmFtaWxpZXMgbWF5IHByZWZlciB0byB3b3JrIHdpdGggYSBtaWR3aWZlIHZlcnN1cyBhbm90aGVyIG1pZC1sZXZlbCBwcmFjdGl0aW9uZXIgb3IgbWVkaWNhbCBkb2N0b3IgYmFzZWQgb24gdGhlaXIgcHJlZmVycmVkIHR5cGUgb2YgY2FyZS4gVGhlIHJpc2Ugb2YgbWlkd2lmZXJ5IGFzIGFuIGFsdGVybmF0aXZlIHRvIE9CL0dZTiBkb2N0b3JzIG1heSBhbHNvIGluZGljYXRlIGdyZWF0ZXIgc2NhcmNpdHkgb2YgZG9jdG9ycyBvZmZlcmluZyBwZXJpbmF0YWwgY2FyZSByZWxhdGl2ZSB0byBkZW1hbmQsIGFzIG1pZHdpdmVzIHJlcXVpcmUgZmV3ZXIgeWVhcnMgb2YgdHJhaW5pbmcuICANCg0KDQpgYGB7ciwgbWlkd2lmZX0NCg0KbXdfZGYgPC0gcHJlZ25hbmN5X2ZpeCAlPiUNCiAgZmlsdGVyKE1lYXN1cmUuTmFtZSA9PSAnQXR0ZW5kZWQgYnkgTGljZW5zZWQgTWlkd2lmZScpICU+JSAjcmVnaW9uYWwgdG90YWxzIG9mIG1pZHdpZmUgYmlydGhzDQogIHNlbGVjdChZZWFyLCBSZWdpb24sIENvdW50KSAlPiUNCiAgZ3JvdXBfYnkoUmVnaW9uLCBZZWFyKSAlPiUNCiAgc3VtbWFyaXplKG13X2JpcnRocyA9IHN1bShDb3VudCkpDQoNCg0KDQptaWR3aXZlc193aWRlIDwtIGNiaW5kKG13X2RmLCByZWdpb25hbF90b3RhbHNbLDNdKSAjYmluZCB0aGUgdG90YWxzIHRvIG1pZHdpZmUgZGF0YWZyYW1lLCB5ZWFycyBhbmQgcmVnaW9ucyBhcmUgaW4gdGhlIHNhbWUgb3JkZXINCg0KbWlkd2l2ZXNfd2lkZSAlPiUNCiAgbXV0YXRlKHBlcmNlbnRfYmlydGhzID0gMTAwKnJvdW5kKG13X2JpcnRocy90b3RhbF9iaXJ0aHMsMykpICU+JQ0KICBnZ3Bsb3QoYWVzKHggPSBZZWFyLCB5ID0gcGVyY2VudF9iaXJ0aHMsIGNvbCA9IFJlZ2lvbikpKw0KICBnZW9tX2xpbmUoKSArDQogIGdlb21fcG9pbnQoKSArDQogIGxhYnModGl0bGUgPSAnUGVyY2VudCBvZiBCaXJ0aHMgQWNjb21wYW5pZWQgYnkgTWlkd2l2ZXMsIDIwMDggLSAyMDE3JywgeSA9ICclIG9mIEJpcnRocycpICsNCiAgc2NhbGVfeF9jb250aW51b3VzKGJyZWFrcyA9IGMoMjAwOCwyMDEwLDIwMTIsMjAxNCwyMDE2LDIwMTgpKQ0KDQoNCg0KYGBgDQoNCk92ZXIgdGltZSwgaXQgYXBwZWFycyB0aGUgbWFqb3JpdHkgb2YgcmVnaW9ucyBzdGF5ZWQgcmVsYXRpdmVseSBjb25zdGFudC4gVGhlIGNsZWFyZXN0IGV4Y2VwdGlvbiBpcyBXZXN0ZXJuIE5ldyBZb3JrIHdob3NlIHBlcmNlbnQgbmVhcmx5IGRvdWJsZWQgb3ZlciBhIDEwIHllYXIgcGVyaW9kLiBJdCdzIGFsc28gbm90YWJsZSB0aGF0IHRoZXJlJ3MgYSBsb3Qgb2YgdmFyaWFiaWx0eSBiZXR3ZWVuIHJlZ2lvbnMsIHdpdGggTG9uZyBJc2xhbmQgYW5kIE5ZQyBoYXZpbmcgbGl0dGxlIHJlcHJlc2VudGF0aW9uIG9mIG1pZHdpdmVzLCBhbmQgdGhlIG1vcmUgcnVyYWwgYXJlYXMgc2hvd2luZyBoaWdoZXIgcmVwcmVzZW50YXRpb24uICBUaGlzIG1heSBiZSByZWxhdGVkIHRvIHRoZSBzdWdnZXN0aW9uIGluIHRoZSBwcmV2aW91cyBzZWNpdG9uIHRoYXQgT0IvR1lOJ3MgcHJlZmVyIHRvIHByYWN0aWNlIGluIHVyYmFuIGFyZWFzLCB3aGlsZSBtaWR3aXZlcyBhcmUgYWRkcmVzc2luZyBwcmFjdGl0aW9uZXIgc2hvcnRhZ2VzIGVsc2V3aGVyZS4gDQoNCiMjIyBDZXNhcmlhbiBCaXJ0aHMNCg0KQW5vdGhlciBwaWVjZSBvZiBjb252ZW50aW9uYWwgd2lzZG9tIHRvIGV4YW1pbmUgaXMgdGhlIHJpc2Ugb2YgQ2VzYXJpYW4gYmlydGhzIG9yIHNvLWNhbGxlZCBDLXNlY3Rpb25zLiBDLXNlY3Rpb25zIGFyZSB0aGUgYWx0ZXJuYXRpdmUgdG8gdmFnaW5hbCBkZWxpdmVyaWVzIGFuZCBhcmUgcGVyZm9ybWVkIGJ5IGFjY2Vzc2luZyB0aGUgdXRlcnVzIHRocm91Z2ggYW4gaW5jaXNpb24gaW4gdGhlIG1vdGhlcidzIHV0ZXJ1LCB3aGlsZSB1bmRlciBnZW5lcmFsIG9yIGxvY2FsIGFuZXN0aGVzaWEuIFRoZXJlIGFyZSBhIHZhcmlldHkgb2YgcmVhc29ucyB3aHkgQy1zZWN0aW9ucyB3b3VsZCBiZSBuZWNlc3NhcnkgZGVwZW5kaW5nIG9uIHRoZSBvcmllbnRhdGlvbiBvZiB0aGUgY2hpbGQgb3Igb2JzdHJ1Y3Rpb24gaW4gdGhlIGJpcnRoIGNhbmFsLCBtdWx0aXBsZSBwcmVnbmFuY2llcyB0byBiZSBkZWxpdmVyZWQsIG9yIGVtZXJnZW5jeSBzaXR1YXRpb25zLiBDLXNlY3Rpb25zIGFyZSBhbHNvIGRvbmUgdXBvbiByZXF1ZXN0LCB3aXRoIHRoZSB0cmFkZS1vZmYgb2Ygc2hvcnRlciBpbmR1Y3Rpb24gcGVyaW9kIHZlcnN1cyBsb25nZXIgcmVjb3ZlcnkgcGVyaW9kLg0KDQoNCmBgYHtyLCBjLXNlY3Rpb259DQoNCmNzX2RmIDwtIHByZWduYW5jeV9maXggJT4lDQogIGZpbHRlcihNZWFzdXJlLk5hbWUgPT0gJ0Nlc2FyZWFuIEJpcnRocycpICU+JSAjcmVnaW9uYWwgdG90YWxzIG9mIG1pZHdpZmUgYmlydGhzDQogIHNlbGVjdChZZWFyLCBSZWdpb24sIENvdW50KSAlPiUNCiAgZ3JvdXBfYnkoWWVhcikgJT4lDQogIHN1bW1hcml6ZShjc19iaXJ0aHMgPSBzdW0oQ291bnQpKQ0KDQp5ZWFybHlfdG90YWxzIDwtIHJlZ2lvbmFsX3RvdGFscyAlPiUNCiAgZ3JvdXBfYnkoWWVhcikgJT4lDQogIHN1bW1hcml6ZSh5ZWFybHlfdG90YWwgPSBzdW0odG90YWxfYmlydGhzKSkNCnllYXJseV90b3RhbHMNCg0KY3Nfd2lkZSA8LSBjYmluZChjc19kZiwgeWVhcmx5X3RvdGFsc1ssMl0pICNiaW5kIHRoZSB5ZWFybHkgdG90YWxzIHRvIGNlc2FyZWFuIGJpcnRocw0KDQpjc193aWRlICU+JQ0KICBtdXRhdGUocGVyY2VudF9jc19iaXJ0aHMgPSAxMDAqcm91bmQoY3NfYmlydGhzL3llYXJseV90b3RhbCwzKSkgJT4lDQogIGdncGxvdChhZXMoeCA9IFllYXIsIHkgPSBwZXJjZW50X2NzX2JpcnRocykpKw0KICBnZW9tX2xpbmUoKSArDQogIGdlb21fcG9pbnQoKSArDQogIHlsaW0oYygyNyw0MikpICsNCiAgbGFicyh0aXRsZSA9ICdQZXJjZW50IG9mIEJpcnRocyB2aWEgQ2VzYXJpYW4gRGVsaXZlcnksIDIwMDggLSAyMDE3JywgeSA9ICclIG9mIEJpcnRocycpICsNCiAgc2NhbGVfeF9jb250aW51b3VzKGJyZWFrcyA9IGMoMjAwOCwyMDEwLDIwMTIsMjAxNCwyMDE2LDIwMTgpKQ0KDQoNCmBgYA0KDQpEdXJpbmcgdGhpcyBwZXJpb2Qgb2YgdGltZSwgdGhlcmUncyBubyBpbmRpY2F0aW9uIHRoYXQgdGhlIHByb3BvcnRpb24gb2YgQ2VzYXJlYW4gYmlydGhzIGluY3JlYXNlZC4NCg0KDQojIyBQZXJpbmF0YWwgQmlydGhpbmcgQ2VudGVyIERlc2lnbmF0aW9uDQoNCkluIGFkZGl0aW9uIHRvIHN0YXRlLWxldmVsIGNvbmNlcm5zLCBpZGVudGlmaWNhdGlvbiBvZiBhIGJpcnRoaW5nIGNlbnRlciBhbmQgcGVyaW5hdGFsIGNhcmUgaXMgYWxzbyBhIG5hdGlvbndpZGUgY29uY2Vybi4gVGhlIEFtZXJpY2FuIEFjYWRlbXkgb2YgUGVkaWF0cmljcyBhbmQgQW1lcmljYW4gQ29sbGVnZSBvZiBPYnN0ZXRyaWNpYW5zIGFuZCBHeW5lY29sb2dpc3RzIG91dGxpbmUgYSByZWdpb25hbCBvcmdhbml6YXRpb24gb2YgcGVyaW5hdGFsIGNhcmUsIHdpdGggZm91ciBsZXZlbHMgb2YgaW50ZW5zaWZ5aW5nIGZhY2lsaXR5IGNhcmUuIEEgbGV2ZWwgMSBmYWNpbGl0eSBwcm92aWRlcyBjYXJlIGZvciB0aGUgbG93ZXN0IHJpc2sgYmlydGhzLCB3aGlsZSBsZXZlbHMgMiwzLCBhbmQgcmVnaW9uYWwgY2VudGVycyBvZmZlciBncmVhdGVyIHN1cHBvcnQgc2VydmljZXMgZHVyaW5nIGNoaWxkYmlydGgsIGFzIHdlbGwgYXMgb3BlcmF0ZSBuZW9uYXRhbCBpbnRlbnNpdmUgY2FyZSB1bml0cyAoTklDVXMpLiBQZXJpbmF0YWwgY2FyZSBoYXMgYWxzbyBlbnRlcmVkIHRoZSBwdWJsaWMgc3BoZXJlIGFzIGEgaGFuZGZ1bCBvZiBjZWxlYnJpdGllcyBoYXZlIHJlcG9ydGVkIGNvbXBsaWNhdGlvbnMgZHVyaW5nIGNoaWxkYmlydGgsIGFzIHdlbGwgYXMgZWZmb3J0cyB0byBkb2N1bWVudCBtYXRlcm5hbCBoYXJtIGluIFByb1B1YmxpY2HigJlzIF8gTG9zdCBNb3RoZXJzXyBzZXJpZXMuDQoNCmBgYHtyLCBiaXJ0aC1jZW50ZXJzfQ0KDQpueV9iYyA8LSByZWFkLmNzdignaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2hpbGx0NS9EQVRBNjA4L21haW4vRmluYWwlMjBQcm9qZWN0L3BlcmluYXRhbF9jZW50ZXJzJykNCg0KDQpgYGANCg0KVGhlIGRhdGFmcmFtZSBhdmFpbGFibGUgZm9yIE5ZIHN0YXRlIGFsc28gZ2l2ZXMgdGhlIGV4YWN0IGxvY2F0aW9uIHZpYSBsYXRpdHVkZSBhbmQgbG9uZ2l0dWRlIGZvciBlYWNoIGhvc3BpdGFsLCBhcyB3ZWxsIGFzIHRoZSB1bmlxdWUgaWRlbnRpZmllciB0aGF0IGVhY2ggbGljZW5zZWQgaGVhbHRoY2FyZSBmYWNpbGl0eSBpbiBOZXcgWW9yayBoYXMuDQoNCg0KYGBge3IsIG55X2JjLXJlZ2lvbnN9DQoNCm55X2JjX2NhcCA8LSBueV9iYyAlPiUNCiAgZmlsdGVyKENvdW50eSAlaW4lIGMoJ0FMQkFOWScgLCAnQ09MVU1CSUEnICwgJ0dSRUVORScsICdSRU5TU0VMQUVSJywgJ1NBUkFUT0dBJywgJ1NDSEVORUNUQURZJywgJ1dBUlJFTicsICdXQVNISU5HVE9OJykpICU+JQ0KICBtdXRhdGUoUmVnaW9uID0gJ0NhcGl0YWwgUmVnaW9uJykNCm55X2JjXzEgPC0gbnlfYmMgJT4lDQogIGZpbHRlcihDb3VudHkgJWluJSBjKCdBbGJhbnknLCAnQ29sdW1iaWEnLCAnR3JlZW5lJywgJ1JlbnNzZWxhZXInLCAnU2FyYXRvZ2EnLCAnU2NoZW5lY3RhZHknLCAnV2FycmVuJywgJ1dhc2hpbmd0b24nKSkgJT4lDQogIG11dGF0ZShSZWdpb24gPSAnQ2FwaXRhbCBSZWdpb24nKQ0KbnlfYmNfMiA8LSBueV9iYyAlPiUNCiAgZmlsdGVyKENvdW50eSAlaW4lIGMoJ0NheXVnYScsICdDb3J0bGFuZCcsICdNYWRpc29uJywgJ09ub25kYWdhJywgJ09zd2VnbycpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdDZW50cmFsIE5ldyBZb3JrJykNCm55X2JjXzMgPC0gbnlfYmMgJT4lDQogIGZpbHRlcihDb3VudHkgJWluJSBjKCdHZW5lc3NlZScsICdMaXZpbmdzdG9uJywgJ01vbnJvZScsICdPbnRhcmlvJywgJ09ybGVhbnMnLCAnU2VuZWNhJywgJ1dheW5lJywgJ1d5b21pbmcnLCAnWWF0ZXMnKSkgJT4lDQogIG11dGF0ZShSZWdpb24gPSAnRmluZ2VyIExha2VzJykNCm55X2JjXzQgPC0gbnlfYmMgJT4lDQogIGZpbHRlcihDb3VudHkgJWluJSBjKCdOYXNzYXUnLCAnU3VmZm9saycpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdMb25nIElzbGFuZCcpDQpueV9iY181IDwtIG55X2JjICU+JQ0KICBmaWx0ZXIoQ291bnR5ICVpbiUgYygnRHVjaGVzcycsICdPcmFuZ2UnLCAnUHV0bmFtJywgJ1JvY2tsYW5kJywgJ1N1bGxpdmFuJywgJ1Vsc3RlcicsICdXZXN0Y2hlc3RlcicpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdNaWQtSHVkc29uJykNCm55X2JjXzYgPC0gbnlfYmMgJT4lDQogIGZpbHRlcihDb3VudHkgJWluJSBjKCdGdWx0b24nLCAnSGVya2ltZXInLCAnTW9udGdvbWVyeScsICdPbmVpZGEnLCAnT3RzZWdvJywgJ1NjaG9oYXJpZScpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdNb2hhd2sgVmFsbGV5JykNCm55X2JjXzcgPC0gbnlfYmMgJT4lDQogIGZpbHRlcihDb3VudHkgJWluJSBjKCdCcm9ueCcsICdLaW5ncycsICdOZXcgWW9yaycsICdRdWVlbnMnLCAnUmljaG1vbmQnKSkgJT4lDQogIG11dGF0ZShSZWdpb24gPSAnTmV3IFlvcmsgQ2l0eScpDQpueV9iY184IDwtIG55X2JjICU+JQ0KICBmaWx0ZXIoQ291bnR5ICVpbiUgYygnQ2xpbnRvbicsICdFc3NleCcsICdGcmFua2xpbicsICdIYW1pbHRvbicsICdKZWZmZXJzb24nLCAnTGV3aXMnLCAnU2FpbnQgTGF3cmVuY2UnKSkgJT4lDQogIG11dGF0ZShSZWdpb24gPSAnTm9ydGggQ291bnRyeScpDQpueV9iY185IDwtIG55X2JjICU+JQ0KICBmaWx0ZXIoQ291bnR5ICVpbiUgYygnQnJvb21lJywgJ0NoZW11bmcnLCAnQ2hlbmFuZ28nLCAnRGVsYXdhcmUnLCAnU2NodXlsZXInLCAnU3RldWJlbicsICdUaW9nYScsICdUb21wa2lucycpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdTb3V0aGVybiBUaWVyJykNCm55X2JjXzEwIDwtIG55X2JjICU+JQ0KICBmaWx0ZXIoQ291bnR5ICVpbiUgYygnQWxsZWdhbnknLCAnQ2F0dGFyYXVndXMnLCAnQ2hhdXRhdXF1YScsICdOaWFncmEnKSkgJT4lDQogIG11dGF0ZShSZWdpb24gPSAnV2VzdGVybiBOZXcgWW9yaycpDQpueV9iY19maXggPC0gcmJpbmQobnlfYmNfMSwgbnlfYmNfMiwgbnlfYmNfMywgbnlfYmNfNCwgbnlfYmNfNSwgbnlfYmNfNiwgbnlfYmNfNywgbnlfYmNfOCwgbnlfYmNfOSwgbnlfYmNfMTApDQoNCm55X2JjX2ZpeCA8LSBueV9iY19maXggJT4lDQogIG11dGF0ZShsZXZlbF9mY3QgPSBjYXNlX3doZW4oDQogICAgTGV2ZWwgPT0gNCB+ICdSZWdpb25hbCBDZW50ZXInLA0KICAgIExldmVsID09IDMgfiAnTGV2ZWwgMycsDQogICAgTGV2ZWwgPT0gMiB+ICdMZXZlbCAyJywNCiAgICBMZXZlbCA9PSAxIH4gJ0xldmVsIDEnDQogICkpDQoNCm55X2JjX2ZpeCRsZXZlbF9mY3QgPC0gZmFjdG9yKG55X2JjX2ZpeCRsZXZlbF9mY3QsIG9yZGVyZWQgPSBUUlVFLCBsZXZlbHMgPSBjKCdSZWdpb25hbCBDZW50ZXInLCAnTGV2ZWwgMycsICdMZXZlbCAyJywgJ0xldmVsIDEnKSkgI2NvbnZlcnQgY2VudGVycyB0byBmYWN0b3INCg0KbnlfYmNfZml4JFJlZ2lvbiA8LSBmYWN0b3IobnlfYmNfZml4JFJlZ2lvbiwgb3JkZXJlZCA9IFRSVUUsIGxldmVscyA9IHJldihjKCdOZXcgWW9yayBDaXR5JywgJ0xvbmcgSXNsYW5kJywgJ01pZC1IdWRzb24nLCAnRmluZ2VyIExha2VzJywgJ0NhcGl0YWwgUmVnaW9uJywgJ0NlbnRyYWwgTmV3IFlvcmsnLCAnU291dGhlcm4gVGllcicsICdNb2hhd2sgVmFsbGV5JywgJ05vcnRoIENvdW50cnknLCAnV2VzdGVybiBOZXcgWW9yaycpKSkNCmBgYA0KDQoNCmBgYHtyLCBiYy1ncmFwaH0NCg0KZ2dwbG90KG55X2JjX2ZpeCkgKw0KICBnZW9tX2JhcihhZXMoeCA9IFJlZ2lvbiwgZmlsbCA9IGxldmVsX2ZjdCkpICsNCiAgY29vcmRfZmxpcCgpICsNCiAgbGFicyh0aXRsZSA9ICdOWSBTdGF0ZSBCaXJ0aGluZyBDZW50ZXIgRGVzaWduYXRpb25zIGJ5IFJlZ2lvbicsIHkgPSAnIyBvZiBIb3NwaXRhbHMnLCBmaWxsID0gJ1BlcmluYXRhbCBDZW50ZXIgVHlwZScpICsNCiAgdGhlbWUobGVnZW5kLnBvc2l0aW9uID0gYygwLjc1LCAwLjI1KSkNCg0KYGBgDQoNCg0KDQojIyBCaXJ0aCBEZWZlY3RzDQoNCmBgYHtyLCBiaXJ0aC1kZWZlY3RzfQ0KYmRfZGYgPC0gcmVhZC5jc3YoJ2h0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9oaWxsdDUvREFUQTYwOC9tYWluL05ZU19CRCcpICNkYXRhIG9ubHkgYXZhaWxhYmxlIGluIDMteWVhciBpbmNyZW1lbnRzIChlLmcuLCAyMDAwLTIwMDIpDQpiZF9kZiR0b3RhbF9kZWZlY3RzIDwtIHJvd1N1bXMoYmRfZGZbLGMoMzo1MSldKSAjIyBzdW0gZGVmZWN0cyBmb3IgZWFjaCByb3cgcGVyIGNvdW50eQ0KDQpgYGANCg0KDQoNCmBgYHtyLCBiZC1kZn0NCg0KDQpwcmVnbmFuY3lfZGYgJT4lDQogIGdyb3VwX2J5KEhvc3BpdGFsLk5hbWUpICU+JQ0KICBzZWxlY3QoRmFjaWxpdHkuSUQsIEhvc3BpdGFsLk5hbWUpICU+JQ0KICBkaXN0aW5jdCgpICU+JQ0KICBtZXJnZShueV9iYywgYnkueCA9ICAiRmFjaWxpdHkuSUQiLCBieS55ID0gJ0lEJywgYWxsLnggPSBUUlVFKSAlPiUNCiAgd3JpdGUuY3N2KCkNCg0KaGVhZChiZF9kZikNCg0KYGBgDQoNCmBgYHtyLCBzdW1tYXJ5LWJkfQ0KYmRfZGYgPC0gcmVhZC5jc3YoJ2h0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9oaWxsdDUvREFUQTYwOC9tYWluL05ZU19CRCcpDQpiZF9kZiR0b3RhbF9kZWZlY3RzIDwtIHJvd1N1bXMoYmRfZGZbLGMoMzo1MSldKQ0KDQpiZF9maXggPC0gYmRfZGYNCmJkX2ZpeF8xIDwtIGJkX2ZpeCAlPiUNCiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ0FsYmFueScsICdDb2x1bWJpYScsICdHcmVlbmUnLCAnUmVuc3NlbGFlcicsICdTYXJhdG9nYScsICdTY2hlbmVjdGFkeScsICdXYXJyZW4nLCAnV2FzaGluZ3RvbicpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdDYXBpdGFsIFJlZ2lvbicpDQpiZF9maXhfMiA8LSBiZF9maXggJT4lDQogIGZpbHRlcihHZW9ncmFwaHkgJWluJSBjKCdDYXl1Z2EnLCAnQ29ydGxhbmQnLCAnTWFkaXNvbicsICdPbm9uZGFnYScsICdPc3dlZ28nKSkgJT4lDQogIG11dGF0ZShSZWdpb24gPSAnQ2VudHJhbCBOZXcgWW9yaycpDQpiZF9maXhfMyA8LSBiZF9maXggJT4lDQogIGZpbHRlcihHZW9ncmFwaHkgJWluJSBjKCdHZW5lc3NlZScsICdMaXZpbmdzdG9uJywgJ01vbnJvZScsICdPbnRhcmlvJywgJ09ybGVhbnMnLCAnU2VuZWNhJywgJ1dheW5lJywgJ1d5b21pbmcnLCAnWWF0ZXMnKSkgJT4lDQogIG11dGF0ZShSZWdpb24gPSAnRmluZ2VyIExha2VzJykNCmJkX2ZpeF80IDwtIGJkX2ZpeCAlPiUNCiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ05hc3NhdScsICdTdWZmb2xrJykpICU+JQ0KICBtdXRhdGUoUmVnaW9uID0gJ0xvbmcgSXNsYW5kJykNCmJkX2ZpeF81IDwtIGJkX2ZpeCAlPiUNCiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ0R1Y2hlc3MnLCAnT3JhbmdlJywgJ1B1dG5hbScsICdSb2NrbGFuZCcsICdTdWxsaXZhbicsICdVbHN0ZXInLCAnV2VzdGNoZXN0ZXInKSkgJT4lDQogIG11dGF0ZShSZWdpb24gPSAnTWlkLUh1ZHNvbicpDQpiZF9maXhfNiA8LSBiZF9maXggJT4lDQogIGZpbHRlcihHZW9ncmFwaHkgJWluJSBjKCdGdWx0b24nLCAnSGVya2ltZXInLCAnTW9udGdvbWVyeScsICdPbmVpZGEnLCAnT3RzZWdvJywgJ1NjaG9oYXJpZScpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdNb2hhd2sgVmFsbGV5JykNCmJkX2ZpeF83IDwtIGJkX2ZpeCAlPiUNCiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ0Jyb254JywgJ0tpbmdzJywgJ05ldyBZb3JrJywgJ1F1ZWVucycsICdSaWNobW9uZCcpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdOZXcgWW9yayBDaXR5JykNCmJkX2ZpeF84IDwtIGJkX2ZpeCAlPiUNCiAgZmlsdGVyKEdlb2dyYXBoeSAlaW4lIGMoJ0NsaW50b24nLCAnRXNzZXgnLCAnRnJhbmtsaW4nLCAnSGFtaWx0b24nLCAnSmVmZmVyc29uJywgJ0xld2lzJywgJ1NhaW50IExhd3JlbmNlJykpICU+JQ0KICBtdXRhdGUoUmVnaW9uID0gJ05vcnRoIENvdW50cnknKQ0KYmRfZml4XzkgPC0gYmRfZml4ICU+JQ0KICBmaWx0ZXIoR2VvZ3JhcGh5ICVpbiUgYygnQnJvb21lJywgJ0NoZW11bmcnLCAnQ2hlbmFuZ28nLCAnRGVsYXdhcmUnLCAnU2NodXlsZXInLCAnU3RldWJlbicsICdUaW9nYScsICdUb21wa2lucycpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdTb3V0aGVybiBUaWVyJykNCmJkX2ZpeF8xMCA8LSBiZF9maXggJT4lDQogIGZpbHRlcihHZW9ncmFwaHkgJWluJSBjKCdBbGxlZ2FueScsICdDYXR0YXJhdWd1cycsICdDaGF1dGF1cXVhJywgJ05pYWdyYScpKSAlPiUNCiAgbXV0YXRlKFJlZ2lvbiA9ICdXZXN0ZXJuIE5ldyBZb3JrJykNCg0KYmRfZml4IDwtIHJiaW5kKGJkX2ZpeF8xLCBiZF9maXhfMiwgYmRfZml4XzMsIGJkX2ZpeF80LCBiZF9maXhfNSwgYmRfZml4XzYsIGJkX2ZpeF83LCBiZF9maXhfOCwgYmRfZml4XzksIGJkX2ZpeF8xMCkNCg0KDQoNCmBgYA0KDQoNCmBgYHtyLCBiZC1jb3VudHl9DQojIyIyMDA5LTIwMTEiICIyMDEyLTIwMTQiDQoNCnVuaXF1ZShiZF9kZiREYXRhWWVhcnMpDQoNCmJkX3JlZ2lvbiA8LSBiZF9maXggJT4lDQogIGZpbHRlcihEYXRhWWVhcnMgJWluJSBjKCcyMDA5LTIwMTEnLCAnMjAxMi0yMDE0JykpICU+JQ0KICBncm91cF9ieShSZWdpb24pICU+JQ0KICBzdW1tYXJpemUocmVnaW9uX2RlZmVjdHMgPSBzdW0odG90YWxfZGVmZWN0cykpICU+JQ0KICBhcnJhbmdlKGRlc2MocmVnaW9uX2RlZmVjdHMpKQ0KDQoNCg0KYGBgDQoNCg0KDQoNCiMjIE1hcHMNCg0KDQoNCg0KDQpTb3VyY2UgZGF0YXNldDoNCg0KaHR0cHM6Ly9oZWFsdGguZGF0YS5ueS5nb3YvSGVhbHRoL0hvc3BpdGFsLU1hdGVybml0eS1JbmZvcm1hdGlvbi1CZWdpbm5pbmctMjAwOC9uZXQzLWl5Z3cNCg0KDQoNClBvdGVudGlhbCBhZGp1bmN0IGRhdGFzZXRzOiANCg0KaHR0cHM6Ly9oZWFsdGguZGF0YS5ueS5nb3YvSGVhbHRoL0JpcnRoLURlZmVjdC1QcmV2YWxlbmNlLUJlZ2lubmluZy0xOTkyL216OHgtMjU1eA0KIA0KDQpodHRwczovL2hlYWx0aC5kYXRhLm55Lmdvdi9IZWFsdGgvVml0YWwtU3RhdGlzdGljcy1MaXZlLUJpcnRocy1hbmQtRmVydGlsaXR5LVJhdGVzLWIvYzJ0eC1qZWNiDQogDQoNCmh0dHBzOi8vZGF0YS5ueS5nb3YvR292ZXJubWVudC1GaW5hbmNlL0FubnVhbC1Qb3B1bGF0aW9uLUVzdGltYXRlcy1mb3ItTmV3LVlvcmstU3RhdGUtYW5kL2tydDkteW0yaw0KDQo=</div>
 
 
 
