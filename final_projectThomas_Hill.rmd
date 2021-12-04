@@ -424,17 +424,18 @@ ny_bc_fix <- ny_bc_fix %>%
     Level == 4 ~ 'Regional Center',
     Level == 3 ~ 'Level 3',
     Level == 2 ~ 'Level 2',
-    Level == 1 ~ 'Level 1'
-  ))
+    Level == 1 ~ 'Level 1',
+    is.na(Level) ~ 'Not Classified'
+  )) 
 
-ny_bc_fix$level_fct <- factor(ny_bc_fix$level_fct, ordered = TRUE, levels = c('Regional Center', 'Level 3', 'Level 2', 'Level 1')) #convert centers to factor
+ny_bc_fix$level_fct <- factor(ny_bc_fix$level_fct, ordered = TRUE, levels = c('Regional Center', 'Level 3', 'Level 2', 'Level 1', 'Not Classified')) #convert centers to factor
 
 ny_bc_fix$Region <- factor(ny_bc_fix$Region, ordered = TRUE, levels = rev(c('New York City', 'Long Island', 'Mid-Hudson', 'Finger Lakes', 'Capital Region', 'Central New York', 'Southern Tier', 'Mohawk Valley', 'North Country', 'Western New York')))
 ```
 
 
 ```{r, bc-graph}
-
+ny_bc_fix
 ggplot(ny_bc_fix) +
   geom_bar(aes(x = Region, fill = level_fct)) +
   coord_flip() +
@@ -443,33 +444,77 @@ ggplot(ny_bc_fix) +
 
 ```
 
+Once again, New York City is the clear outlier when it comes to perinatal center designation. It has no Level 1 centers, only the three higher designations.  For the rest of New York, there's a general pattern that Level 1 centers serve as a base and there's at least one higher level center for more complex pregnancies or intensification of treatment. 
 
+### Perinatal Centers versus Birth Rates
+
+
+Next, let's consider the capacity of each of these hospitals: are regional centers also delivering more babies, or are the hospital beds reserved for only for the cases that demand it?
+
+To proceed, there's one issue I'll have to address with the perinatal center data, which is that some of the hospitals in our initial dataset are not listed as birthing centers. I'll identify these centers, see if they are significant contributors to the number of births, and then join the two 
+
+```{r, missing-centers}
+
+
+bc_id <- ny_bc_fix %>%
+  select(ID) %>%
+  distinct() %>%
+  arrange(desc(ID)) 
+
+preg_id <- pregnancy_fix %>%
+  select(Facility.ID) %>%
+  distinct() %>%
+  arrange(desc(Facility.ID)) 
+
+missing_id <- append(setdiff(bc_id$ID, preg_id$Facility.ID),  setdiff(preg_id$Facility.ID, bc_id$ID))
+```
+
+In all, there are 3 facilities missing from the original dataframe, and 20 from the perinatal center dataframe. For the three missing from the original, the Burdett Center was consolidated into the Samaritan Hospital in Troy, NY, and the remaing two are smaller hospitals in Saint Lawrence county. I have since updated the ID for the Burdett Center.
+
+
+```{r, missing-hospitals}
+
+pregnancy_missing <- pregnancy_fix[pregnancy_fix$Facility.ID %in% missing_id,] 
+
+pregnancy_missing %>%
+  filter(Measure.Name == 'Total Births') %>%
+  select(Year, Hospital.Name, Count) %>%
+  ggplot(aes(x = Year, y = Count, col = Hospital.Name)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Missing Hospitals, Births per Year", y = '# Births') +
+  scale_x_continuous(breaks = c(2008,2010,2012,2014,2016,2018))
+
+```
+On the other hand, there are 20 hospitals missing as perinatal care centers. Some of these I will omit as they no longer report data at the end of the study period in 2017. This could be because of closure or consolidation with another nearby hospital. For the remaining hospitals, Beth Israel and Mercy Medical Center, I manually added these to the second dataframe for later use. I did not specify what level of care they both are, although both facilities contain NICU's and would likely be at least Level 2. 
+
+
+```{r, hospital-births-by-centers}
+
+
+bc_same_hosp <- ny_bc_fix %>%
+  filter(ID %in% unique(pregnancy_fix$Facility.ID)) %>%
+  select(ID, Latitude, Longitude, level_fct)
+
+preg_bc <- left_join(x = pregnancy_fix, y = bc_same_hosp, by = c('Facility.ID' = 'ID')) #Join new hospital info 
+preg_bc <- preg_bc %>%
+  drop_na()
+
+preg_bc %>%
+  ggplot(aes(x = Year, y = Count, fill = level_fct)) +
+  geom_col() +
+  labs(title = 'Annual Births by Perinatal Center Designation', y = '# Births', fill = 'Perinatal Center Designation') +
+  scale_x_continuous(breaks = c(2008,2010,2012,2014,2016,2018))
+
+
+```
+
+Interestingly, some of the most advanced care centers are also the ones that are delivering the most babies. This may very well be their profit model - plan to perform many deliveries and be prepared to escalate care seamlessly if the situation warrants it. This also may be an artifact of the urban-rural divide when it comes to perinatal care centers, which I'll visualize geographically in the final section.
 
 ## Birth Defects
 
-```{r, birth-defects}
-bd_df <- read.csv('https://raw.githubusercontent.com/hillt5/DATA608/main/NYS_BD') #data only available in 3-year increments (e.g., 2000-2002)
-bd_df$total_defects <- rowSums(bd_df[,c(3:51)]) ## sum defects for each row per county
 
-```
-
-
-
-```{r, bd-df}
-
-
-pregnancy_df %>%
-  group_by(Hospital.Name) %>%
-  select(Facility.ID, Hospital.Name) %>%
-  distinct() %>%
-  merge(ny_bc, by.x =  "Facility.ID", by.y = 'ID', all.x = TRUE) %>%
-  write.csv()
-
-head(bd_df)
-
-```
-
-```{r, summary-bd}
+```{r, load-bd}
 bd_df <- read.csv('https://raw.githubusercontent.com/hillt5/DATA608/main/NYS_BD')
 bd_df$total_defects <- rowSums(bd_df[,c(3:51)])
 
@@ -515,7 +560,7 @@ bd_fix <- rbind(bd_fix_1, bd_fix_2, bd_fix_3, bd_fix_4, bd_fix_5, bd_fix_6, bd_f
 ```{r, bd-county}
 ##"2009-2011" "2012-2014"
 
-unique(bd_df$DataYears)
+
 
 bd_region <- bd_fix %>%
   filter(DataYears %in% c('2009-2011', '2012-2014')) %>%
@@ -525,30 +570,153 @@ bd_region <- bd_fix %>%
 
 
 
+
+regional_0914 <- regional_totals %>%
+  filter(Year %in% c(2009:2014)) %>%
+  group_by(Region) %>%
+  summarize(births_0914 = sum(total_births))
+
+
+bd_per_capita <- cbind(bd_region, regional_0914[,2])
+
+
+pop_0914 <- regional_per_capita %>%
+  filter(Year %in% c(2009:2014)) %>%
+  group_by(Region) %>%
+  summarize(pop_0914 =  sum(region_population)/6) #average population of each region over 2009 - 2014  
+
+bd_births_0914 <- merge(bd_per_capita, pop_0914, by = 'Region') %>%
+  mutate(defects_per_capita = 1000*region_defects/pop_0914/6) %>% #per 1000 population, divided by 6 for annualized
+  mutate(births_per_capita = 1000*births_0914/pop_0914/6) #per 1000 population, divided by 6 for annualized
+
+
+bd_births_0914 %>%
+  ggplot(aes(x = Region, y = defects_per_capita)) +
+  geom_col() +
+  labs(title = 'Birth Defects for Each NY State Region, 2009-2014', y = 'All Birth Defects, per 1,000 population') +
+  coord_flip() 
+
+
 ```
 
 
+```{r, }
+
+
+bd_births_0914 %>%
+  ggplot(aes(births_per_capita, defects_per_capita)) +
+  geom_point(aes(size = pop_0914), show.legend = FALSE) +
+  geom_smooth(se = FALSE, method = 'lm') +
+  labs(title= 'Birth Rate versus Birth Defect rate, 2009 - 2014 in New York State', x = 'Births per 1,000 population', y = 'Birth Defects per 1,000 Population')
+
+bd_
+ 
+```
+
+
+```{r, bd-county}
+##"2009-2011" "2012-2014"
+
+
+
+bd_county <- bd_fix %>%
+  filter(DataYears %in% c('2009-2011', '2012-2014')) %>%
+  group_by(Geography) %>%
+  summarize(county_defects = sum(total_defects)) %>%
+  arrange(desc(Geography))
+
+county_totals <- pregnancy_fix %>%
+  filter(Measure.Name == 'Total Births') %>% #useful dataframe with annual birth totals for each region
+  select(Year, Hospital.County, Count) %>%
+  group_by(Hospital.County, Year) %>%
+  summarize(county_births = sum(Count))
+
+county_births_0914 <- county_totals %>%
+  filter(Year %in% c(2009:2014)) %>%
+  group_by(Hospital.County) %>%
+  summarize(births_0914 = sum(county_births)) %>%
+  arrange(desc(Hospital.County))
+
+bd_county <- bd_county %>%
+  filter(Geography %in% unique(county_births_0914$Hospital.County)) #remove counties not in original dataset
+
+
+bd_births_county <- cbind(bd_county, county_births_0914[,2])
+
+county_pop <- ny_pop_fix %>%
+  filter(Year %in% c(2008:2017))  %>%
+  group_by(Geography, Year) %>%
+  summarize(county_population = sum(Population))
+
+
+county_pop_0914 <- county_pop %>%
+  filter(Year %in% c(2009:2014)) %>%
+  filter(Geography %in% unique(county_births_0914$Hospital.County)) %>% #remove counties not in original dataset
+  group_by(Geography) %>%
+  summarize(pop_0914 =  sum(county_population)/6) %>% #average population of each region over 2009 - 2014  
+  arrange(desc(Geography))
+
+county_bd_births_0914 <- cbind(bd_births_county, county_pop_0914[,2]) %>%
+  mutate(defects_per_capita = 1000*county_defects/pop_0914/6) %>% #per 1000 population, divided by 6 for annualized
+  mutate(births_per_capita = 1000*births_0914/pop_0914/6) #per 1000 population, divided by 6 for annualized
+
+
+county_bd_births_0914 %>%
+  ggplot(aes(x = births_per_capita, y = defects_per_capita)) +
+  geom_smooth(se = FALSE, method = 'lm') +
+  geom_point(aes(size = pop_0914), show.legend = FALSE) +
+  labs(title = 'Birth Defects for Each NY State County, 2009-2014', x = 'Births per 1,000 population', y = 'All Birth Defects, per 1,000 population') 
+
+
+```
+
+### Hospitals, Perinatal Centers, and Birth Defects
+
+Tying everything all together, the last visualization will finally consider the same space as regional and county births versus birth defects, except the final implmentation will consider each individual hospital. This will hopefully add even more detail than the geographical distinctions.
+
+```{r, birthing-centers-vs-births}
+
+county_bd_births_0914
+
+
+
+
+```
 
 
 ## Maps
 
 
 
+Previous interpretations of these data have primarily considered the dataset without any additional context or stratification of care. The rates are given per birth and fail to consider the large variations in population density and fertility rate in different New York counties. Additionally, the NY state Maternal and Child Health dashboard does provide some more general metrics of maternal and child outcomes, but do not offer any crossover with the selected information for maternity patients.
+My goals for visualizing NY State maternity information is to provide a patient-level guide to identifying facilities that deviate from the average. An interactive website will allow users to track the statistics over a time period, as well as filtering by county and facility. I’ll also generate several graphics to help understand trends for the four levels of perinatal care versus differences in the underlying statistics. 
+
+Sources:
+New York State Public Health Law: § 2803-j, Information for Maternity Patients: https://www.health.ny.gov/facilities/hospital/maternity/public_health_law_section_2803-j.htm
 
 
-Source dataset:
+Perinatal level centers in New York:
+https://profiles.health.ny.gov/Hospital/designated_center/Level+3+Perinatal+Center
 
+Guidelines for Perinatal Care, 8th Edition: https://www.acog.org/clinical-information/physician-faqs/-/media/3a22e153b67446a6b31fb051e469187c.ashx
+
+
+Datasets: 
+
+Maternity statistics:
 https://health.data.ny.gov/Health/Hospital-Maternity-Information-Beginning-2008/net3-iygw
 
-
-
-Potential adjunct datasets: 
-
+Birth Defect Prevalence:
 https://health.data.ny.gov/Health/Birth-Defect-Prevalence-Beginning-1992/mz8x-255x
  
-
-https://health.data.ny.gov/Health/Vital-Statistics-Live-Births-and-Fertility-Rates-b/c2tx-jecb
- 
-
+New York Population Estimates:
 https://data.ny.gov/Government-Finance/Annual-Population-Estimates-for-New-York-State-and/krt9-ym2k
 
+
+
+
+More reading:
+Federal Officials Aim to Cut Maternal Deaths by Half: https://www.usnews.com/news/health-news/articles/2020-12-03/federal-officials-aim-to-reduce-maternal-deaths-by-50
+
+New York State Maternal and Child Health 
+Dashboard:https://webbi1.health.ny.gov/SASStoredProcess/guest?_program=/EBI/PHIG/apps/mch_dashboard/mch_dashboard&p=ct
