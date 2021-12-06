@@ -13,6 +13,8 @@ library(dplyr)
 library(stringr)
 library(sf)
 library(tidyr)
+library(leaflet)
+library(RColorBrewer)
 
 ```
 
@@ -560,8 +562,6 @@ bd_fix <- rbind(bd_fix_1, bd_fix_2, bd_fix_3, bd_fix_4, bd_fix_5, bd_fix_6, bd_f
 
 
 ```{r, bd-county}
-##"2009-2011" "2012-2014"
-
 
 
 bd_region <- bd_fix %>%
@@ -616,9 +616,7 @@ bd_
 ```
 
 
-```{r, bd-county}
-##"2009-2011" "2012-2014"
-
+```{r, bd-county-fix}
 
 
 bd_county <- bd_fix %>%
@@ -656,7 +654,7 @@ county_pop_0914 <- county_pop %>%
   filter(Geography %in% unique(county_births_0914$Hospital.County)) %>% #remove counties not in original dataset
   group_by(Geography) %>%
   summarize(pop_0914 =  sum(county_population)/6) %>% #average population of each region over 2009 - 2014  
-  arrange(desc(Geography))
+  arrange((Geography))
 
 county_bd_births_0914 <- cbind(bd_births_county, county_pop_0914[,2]) %>%
   mutate(defects_per_capita = 1000*county_defects/pop_0914/6) %>% #per 1000 population, divided by 6 for annualized
@@ -696,21 +694,85 @@ county_minus <- county_bd_births_0914[county_bd_births_0914$Geography %in% uniqu
 
 hospital_births0914 <- left_join(x = preg_bc_0914,y= county_minus, by = c('Hospital.County'= 'Geography'))
 
-hospital_births0914
+
+names(hospital_births0914)[7] <- 'Perinatal Center Type'
+
 hospital_births0914 %>%
-  ggplot(aes(x = births_per_capita, y = defects_per_capita)) +
-  geom_point(aes(size = annual_hospital_births, col = level_fct )) +
+  ggplot() +
+  geom_jitter( width = 0.4, height = 0.02, aes(x = births_per_capita, y = defects_per_capita,size = annual_hospital_births, col = `Perinatal Center Type` ), alpha = 0.7) +
   labs(title = 'Hospital Births for New York State, 2009-2014', x = 'Births per 1,000 population', y = 'All Birth Defects, per 1,000 population') +
   guides(size = 'none') +
-  theme(legend.position = c(0.85,0.75)) +
-    labs( fill = 'Perinatal Center Type') 
-
-
+  theme(legend.position = c(0.85,0.75))  
 
 ```
 
 
 ## Maps
+
+
+Finally, lets visualize hospitals and births relative to the geography of New York State.
+
+
+
+```{r, load-json}
+
+nycounties <- rgdal::readOGR('https://raw.githubusercontent.com/hillt5/DATA608/main/Final%20Project/gz_2010_us_050_00_20m.json')
+
+nycounties <- nycounties[nycounties$STATE == 36,]
+
+
+```
+
+
+```{r, hospital-locations}
+
+pal <- colorNumeric("viridis", NULL)
+factpal <- colorFactor(rev(brewer.pal(5, 'YlGnBu')), hospital_births0914$`Perinatal Center Type`)
+
+
+leaflet(nycounties) %>%
+  addPolygons(weight = 1, color = 'white', popup = ~nycounties$NAME, dashArray =  '3', 
+  highlightOptions = highlightOptions(weight = 2, color = 'white', dashArray = '', fillOpacity = 0.8, bringToFront = TRUE)) %>%
+  addProviderTiles(providers$CartoDB.DarkMatter) %>%
+  addCircleMarkers(lng = ~hospital_births0914$Longitude, lat = ~hospital_births0914$Latitude, popup = ~as.character((hospital_births0914$Hospital.Name)), radius = ~(hospital_births0914$annual_hospital_births**.25), color =~factpal(hospital_births0914$`Perinatal Center Type`), fillOpacity = 0.8)
+
+
+```
+
+```{r, hospital-locations}
+
+
+factpal <- colorFactor('seqseq1', domain = choropleth_counties$map_color)
+
+
+choropleth_counties <- county_bd_births_0914 %>%
+  mutate(map_color = case_when(
+    births_per_capita < 2.94 & defects_per_capita < 0.076 ~ 'Low-Low',
+    births_per_capita < 2.94 & (defects_per_capita > 0.076 & defects_per_capita < 0.90) ~ 'Low-Med',
+    births_per_capita < 2.94 & defects_per_capita > 0.90 ~ 'Low-High',
+    (births_per_capita > 2.94 & births_per_capita < 41.5) & defects_per_capita < 0.076 ~ 'Med-Low',
+    (births_per_capita > 2.94 & births_per_capita < 41.5) & (defects_per_capita > 0.076 & defects_per_capita < 0.90) ~ 'Med-Med',
+    (births_per_capita > 2.94 & births_per_capita < 41.5) & defects_per_capita > 0.90 ~ 'Med-High',
+    births_per_capita > 41.5 & defects_per_capita < 0.076 ~ 'High-Low',
+    births_per_capita > 41.5 & (defects_per_capita > 0.076 & defects_per_capita < 0.90) ~ 'High-Med',
+    births_per_capita > 41.5 & defects_per_capita > 0.90 ~ 'High-High'
+  ))
+
+choropleth_counties$map_color <- factor(choropleth_counties$map_color, ordered = TRUE, levels = c('Low-Low', 'Low-Med', 'Low-High', 'Med-Low', 'Med-Med', 'Med-High', 'High-Low', 'High-Med', 'High-High'))
+
+
+factpal <- colorFactor(stevens.bluered(n= 9), domain = rev(choropleth_counties$map_color))
+
+
+leaflet(nycounties) %>%
+  addPolygons(fillColor = ~factpal(choropleth_counties$map_color), fillOpacity = 1, weight = 1, opacity = 1, color = 'white', popup = ~nycounties$NAME) %>%
+  addProviderTiles(providers$CartoDB.DarkMatter) %>%
+  addLegend(pal = factpal, values = ~choropleth_counties$map_color, title = 'NY Birth Rate versus Birth Dfects, 2009 - 2014')
+
+
+
+```
+
 
 
 
