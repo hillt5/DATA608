@@ -1,4 +1,4 @@
-vertices,size, fill
+vertices,size,fill
 Adirondack Medical Center-Saranac Lake Site,169.3333333,Level 1
 Albany Medical Center Hospital,2144.666667,Regional Center
 Alice Hyde Medical Center,289.6666667,Level 1
@@ -111,57 +111,58 @@ Woman's Christian Association,640.6666667,Level 1
 Woodhull Medical & Mental Health Center,2048.5,Level 3
 Wyckoff Heights Medical Center,1459.5,Level 3
 Wyoming County Community Hospital,235.5,Level 1
-New York,44706.5,NA
-Kings,30249.66667,NA
-Queens,23802.33333,NA
-Suffolk,14531.66667,NA
-Westchester,10618.16667,NA
-Bronx,16174.16667,NA
-Nassau,15460.83333,NA
-Monroe,521.1666667,NA
-Onondaga,6994.333333,NA
-Orange,2132,NA
-Albany,4785.666667,NA
-Broome,2761.166667,NA
-Chautauqua,1268.833333,NA
-Franklin,459,NA
-Jefferson,2049.666667,NA
-Oneida,2682,NA
-Ontario,1045.166667,NA
-Richmond,5967.333333,NA
-Rockland,4663.5,NA
-Capital Region,10789.16667,NA
-Central New York,9452.833333,NA
-Finger Lakes,12006,NA
-Long Island,29992.5,NA
-Mid-Hudson,18941.16667,NA
-Mohawk Valley,4381,NA
-New York City,120900,NA
-North Country,3722,NA
-Southern Tier,5785.5,NA
-Western New York,2356.666667,NA
-Cattaraugus,,NA
-Cayuga,,NA
+Capital Region,,NA
+Central New York,,NA
+Finger Lakes,,NA
+Long Island,,NA
+Mid-Hudson,,NA
+Mohawk Valley,,NA
+New York City,,NA
+North Country,,NA
+Southern Tier,,NA
+Western New York,,NA
+Franklin,,NA
+Albany,,NA
 Chemung,,NA
-Chenango,,NA
-Clinton,,NA
-Columbia,,NA
-Cortland,,NA
-Fulton,,NA
-Lewis,,NA
-Livingston,,NA
-Madison,,NA
-Montgomery,,NA
-Oswego,,NA
-Otsego,,NA
-Putnam,,NA
-Rensselaer,,NA
-Saratoga,,NA
-Schenectady,,NA
-Steuben,,NA
+Cayuga,,NA
+New York,,NA
+Bronx,,NA
+Kings,,NA
+Chautauqua,,NA
+Jefferson,,NA
 Sullivan,,NA
 Tompkins,,NA
-Ulster,,NA
+Clinton,,NA
+Chenango,,NA
+Columbia,,NA
+Onondaga,,NA
+Steuben,,NA
+Cortland,,NA
+Schenectady,,NA
+Queens,,NA
+Ontario,,NA
+Oneida,,NA
 Warren,,NA
+Suffolk,,NA
+Rockland,,NA
+Monroe,,NA
+Westchester,,NA
+Ulster,,NA
+Lewis,,NA
+Otsego,,NA
+Allegany,,NA
+Nassau,,NA
+Fulton,,NA
 Wayne,,NA
+Livingston,,NA
+Cattaraugus,,NA
+Madison,,NA
+Orange,,NA
+Oswego,,NA
+Broome,,NA
+Putnam,,NA
+Richmond,,NA
+Rensselaer,,NA
+Saratoga,,NA
+Montgomery,,NA
 Wyoming,,NA
