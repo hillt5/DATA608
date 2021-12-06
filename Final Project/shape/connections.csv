@@ -1,16 +1,16 @@
 from,to
 North Country,Capital Region
 North Country,Mohawk Valley
-Capital Region,North Contry
+Capital Region,North Country
 Capital Region,Mohawk Valley
 Capital Region,Southern Tier
 Capital Region,Mid-Hudson
-Mohawk Valley,North Contry
+Mohawk Valley,North Country
 Mohawk Valley,Capital Region
 Mohawk Valley,Central New York
 Mohawk Valley,Southern Tier
 Mohawk Valley,Mid-Hudson
-Central New York,North Contry
+Central New York,North Country
 Central New York,Mohawk Valley
 Central New York,Finger Lakes
 Central New York,Southern Tier
@@ -32,7 +32,7 @@ New York City,Mid-Hudson
 New York City,Long Island
 Long Island,New York City
 Clinton,Franklin
-Frnaklin,Clinton
+Franklin,Clinton
 Franklin,Hamilton
 Franklin,Jefferson
 Franklin,Lewis
@@ -61,7 +61,7 @@ Oneida,Otsego
 Otsego,Oneida
 Otsego,Montgomery
 Cayuga,Oswego
-Cauyga,Onondaga
+Cayuga,Onondaga
 Cortland,Cayuga
 Cortland,Onondaga
 Madison,Oswego
@@ -97,7 +97,7 @@ Orange,Putnam
 Orange,Rockland
 Putnam,Orange
 Putnam,Westchester
-Sullivan,Ulter
+Sullivan,Ulster
 Sullivan,Orange
 Rockland,Orange
 Rockland,Westchester
