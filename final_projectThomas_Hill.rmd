@@ -491,16 +491,18 @@ On the other hand, there are 20 hospitals missing as perinatal care centers. Som
 
 ```{r, hospital-births-by-centers}
 
-
 bc_same_hosp <- ny_bc_fix %>%
   filter(ID %in% unique(pregnancy_fix$Facility.ID)) %>%
   select(ID, Latitude, Longitude, level_fct)
 
-preg_bc <- left_join(x = pregnancy_fix, y = bc_same_hosp, by = c('Facility.ID' = 'ID')) #Join new hospital info 
-preg_bc <- preg_bc %>%
-  drop_na()
+preg_same_hosp <- pregnancy_fix %>%
+  filter(Facility.ID %in% unique(bc_same_hosp$ID))
+
+preg_bc <- left_join(x = preg_same_hosp, y = bc_same_hosp, by = c('Facility.ID' = 'ID')) %>% #Join new hospital info 
+  distinct()
 
 preg_bc %>%
+  filter(Measure.Name == 'Total Births') %>%
   ggplot(aes(x = Year, y = Count, fill = level_fct)) +
   geom_col() +
   labs(title = 'Annual Births by Perinatal Center Designation', y = '# Births', fill = 'Perinatal Center Designation') +
@@ -678,6 +680,30 @@ Tying everything all together, the last visualization will finally consider the 
 
 county_bd_births_0914
 
+preg_bc_0914 <- preg_bc %>%
+  filter(Year %in% c(2009:2014)) %>%
+  filter(Measure.Name == 'Total Births') %>%
+  group_by(Hospital.Name) %>%
+  mutate(annual_hospital_births = sum(Count)/6) %>% #average over 6-year period
+  select(Facility.ID, Hospital.Name, Hospital.County, annual_hospital_births, Latitude, Longitude, level_fct) %>%
+  distinct() %>%
+  arrange(Hospital.Name)
+  
+preg_bc_0914 <- preg_bc_0914[-c(6),]  #For some reason there was a single duplicate row with incorrect lat/longitude
+  
+
+county_minus <- county_bd_births_0914[county_bd_births_0914$Geography %in% unique(preg_bc_0914$Hospital.County),]
+
+hospital_births0914 <- left_join(x = preg_bc_0914,y= county_minus, by = c('Hospital.County'= 'Geography'))
+
+hospital_births0914
+hospital_births0914 %>%
+  ggplot(aes(x = births_per_capita, y = defects_per_capita)) +
+  geom_point(aes(size = annual_hospital_births, col = level_fct )) +
+  labs(title = 'Hospital Births for New York State, 2009-2014', x = 'Births per 1,000 population', y = 'All Birth Defects, per 1,000 population') +
+  guides(size = 'none') +
+  theme(legend.position = c(0.85,0.75)) +
+    labs( fill = 'Perinatal Center Type') 
 
 
 
