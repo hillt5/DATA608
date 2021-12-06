@@ -1,0 +1,130 @@
+from,to
+North Country,Capital Region
+North Country,Mohawk Valley
+Capital Region,North Country
+Capital Region,Mohawk Valley
+Capital Region,Southern Tier
+Capital Region,Mid-Hudson
+Mohawk Valley,North Country
+Mohawk Valley,Capital Region
+Mohawk Valley,Central New York
+Mohawk Valley,Southern Tier
+Mohawk Valley,Mid-Hudson
+Central New York,North Country
+Central New York,Mohawk Valley
+Central New York,Finger Lakes
+Central New York,Southern Tier
+Finger Lakes,Central New York
+Finger Lakes,Western New York
+Finger Lakes,Southern Tier
+Western New York,Finger Lakes
+Western New York,Southern Tier
+Southern Tier,Mohawk Valley
+Southern Tier,Mohawk Valley
+Southern Tier,Capital Region
+Southern Tier,Central New York
+Southern Tier,Finger Lakes
+Southern Tier,Western New York
+Mid-Hudson,Capital Region
+Mid-Hudson,Southern Tier
+Mid-Hudson,New York City
+New York City,Mid-Hudson
+New York City,Long Island
+Long Island,New York City
+Clinton,Franklin
+Franklin,Clinton
+Franklin,Hamilton
+Franklin,Jefferson
+Franklin,Lewis
+Jefferson,Lewis
+Jefferson,Franklin
+Lewis,Jefferson
+Lewis,Franklin
+Warren,Saratoga
+Saratoga,Warren
+Saratoga,Rensselaer
+Saratoga,Schenectady
+Saratoga,Albany
+Rensselaer,Saratoga
+Rensselaer,Albany
+Rensselaer,Columbia
+Albany,Rensselaer
+Albany,Schenectady
+Albany,Greene
+Columbia,Rensselaer
+Columbia,Greene
+Greene,Albany
+Greene,Columbia
+Fulton,Montgomery
+Montgomery,Otsego
+Oneida,Otsego
+Otsego,Oneida
+Otsego,Montgomery
+Cayuga,Oswego
+Cayuga,Onondaga
+Cortland,Cayuga
+Cortland,Onondaga
+Madison,Oswego
+Madison,Onondaga
+Onondaga,Oswego
+Onondaga,Cayuga
+Onondaga,Madison
+Onondaga,Cortland
+Oswego,Onondaga
+Livingston,Monroe
+Livingston,Ontario
+Livingston,Wyoming
+Monroe,Wayne
+Monroe,Ontario
+Monroe,Livingston
+Ontario,Wayne
+Ontario,Monroe
+Wayne,Monroe
+Wayne,Ontario
+Wyoming,Livingston
+Allegany,Cattaraugus
+Cattaraugus,Chautauqua
+Chautauqua,Cattaraugus
+Chautauqua,Allegany
+Broome,Chenango
+Broome,Tompkins
+Chemung,Tompkins
+Chemung,Steuben
+Chenango,Broome
+Steuben,Chemung
+Tompkins,Chemung
+Tompkins,Broome
+Orange,Sullivan
+Orange,Putnam
+Orange,Rockland
+Putnam,Orange
+Putnam,Westchester
+Sullivan,Ulster
+Sullivan,Orange
+Rockland,Orange
+Rockland,Westchester
+Ulster,Sullivan
+Ulster,Orange
+Westchester,Putnam
+Westchester,Rockland
+Bronx,New York
+Bronx,Queens
+Kings,New York
+Kings,Queens
+New York,Bronx
+New York,Queens
+New York,Kings
+New York,Richmond
+Queens,Bronx
+Queens,New York
+Queens,Kings
+Richmond,New York
+Richmond,Kings
+Nassau,Suffolk
+Suffolk,Nassau
+Schenectady,Saratoga
+Schenectady,Albany
+Albany,Schenectady
+Saratoga,Schenectady
+Fulton,Montgomery
+Montgomery,Fulton
