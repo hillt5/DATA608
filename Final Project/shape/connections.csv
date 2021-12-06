@@ -86,12 +86,14 @@ Allegany,Cattaraugus
 Cattaraugus,Chautauqua
 Chautauqua,Cattaraugus
 Chautauqua,Allegany
+Broome, Chenango
+Broome, Tompkins
 Chemung,Tompkins
 Chemung,Steuben
-Chenango,Tompkins
+Chenango,Broome
 Steuben,Chemung
 Tompkins,Chemung
-Tompkins,Chenango
+Tompkins,Broome
 Orange,Sullivan
 Orange,Putnam
 Orange,Rockland
@@ -120,3 +122,9 @@ Richmond,New York
 Richmond,Kings
 Nassau,Suffolk
 Suffolk,Nassau
+Schenectady, Saratoga
+Schenectady, Albany
+Albany, Schenectady
+Saratoga, Schenectady
+Fulton, Montgomery
+Montgomery, Fulton
