@@ -1,4 +1,4 @@
-vertices,size,fill
+vertices,size, fill
 Adirondack Medical Center-Saranac Lake Site,169.3333333,Level 1
 Albany Medical Center Hospital,2144.666667,Regional Center
 Alice Hyde Medical Center,289.6666667,Level 1
@@ -140,3 +140,28 @@ New York City,120900,NA
 North Country,3722,NA
 Southern Tier,5785.5,NA
 Western New York,2356.666667,NA
+Cattaraugus,,NA
+Cayuga,,NA
+Chemung,,NA
+Chenango,,NA
+Clinton,,NA
+Columbia,,NA
+Cortland,,NA
+Fulton,,NA
+Lewis,,NA
+Livingston,,NA
+Madison,,NA
+Montgomery,,NA
+Oswego,,NA
+Otsego,,NA
+Putnam,,NA
+Rensselaer,,NA
+Saratoga,,NA
+Schenectady,,NA
+Steuben,,NA
+Sullivan,,NA
+Tompkins,,NA
+Ulster,,NA
+Warren,,NA
+Wayne,,NA
+Wyoming,,NA
