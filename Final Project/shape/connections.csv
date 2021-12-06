@@ -122,9 +122,9 @@ Richmond,New York
 Richmond,Kings
 Nassau,Suffolk
 Suffolk,Nassau
-Schenectady, Saratoga
-Schenectady, Albany
-Albany, Schenectady
-Saratoga, Schenectady
-Fulton, Montgomery
-Montgomery, Fulton
+Schenectady,Saratoga
+Schenectady,Albany
+Albany,Schenectady
+Saratoga,Schenectady
+Fulton,Montgomery
+Montgomery,Fulton
