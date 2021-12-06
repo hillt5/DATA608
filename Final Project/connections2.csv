@@ -1,49 +1,4 @@
 from,to
-Capital Region,Albany
-Capital Region,Columbia Memorial Hospital
-Capital Region,Samaritan Hospital
-Capital Region,Saratoga Hospital
-Capital Region,Ellis Hospital - Bellevue Woman's Care Center Division
-Capital Region,Glens Falls Hospital
-Central New York,Auburn Memorial Hospital
-Central New York,Cortland Regional Medical Center Inc
-Central New York,Oneida Healthcare Center
-Central New York,Onondaga
-Central New York,Oswego Hospital
-Finger Lakes,Nicholas H Noyes Memorial Hospital
-Finger Lakes,Monroe
-Finger Lakes,Ontario
-Finger Lakes,Newark-Wayne Community Hospital
-Finger Lakes,Wyoming County Community Hospital
-Long Island,Nassau
-Long Island,Suffolk
-Mid-Hudson,Orange
-Mid-Hudson,Putnam Hospital Center
-Mid-Hudson,Rockland
-Mid-Hudson,Catskill Regional Medical Center
-Mid-Hudson,Kingston Hospital
-Mid-Hudson,Westchester
-Mohawk Valley,Nathan Littauer Hospital
-Mohawk Valley,St Marys Hospital at Amsterdam
-Mohawk Valley,Oneida
-Mohawk Valley,Mary Imogene Bassett Hospital
-New York City,Bronx
-New York City,Kings
-New York City,New York
-New York City,Queens
-New York City,Richmond
-North Country,Champlain Valley Physicians Hospital Medical Center
-North Country,Franklin
-North Country,Jefferson
-North Country,Lewis
-Southern Tier,Broome
-Southern Tier,Arnot Ogden Medical Center
-Southern Tier,Chenango Memorial Hospital Inc
-Southern Tier,Corning Hospital
-Southern Tier,Cayuga Medical Center at Ithaca
-Western New York,Memorial Hosp of Wm F & Gertrude F Jones A/K/A Jones Memorial Hosp
-Western New York,Olean General Hospital
-Western New York,Chautauqua
 Franklin,Adirondack Medical Center-Saranac Lake Site
 Albany,Albany Medical Center Hospital
 Franklin,Alice Hyde Medical Center
@@ -156,3 +111,48 @@ Chautauqua,Woman's Christian Association
 Kings,Woodhull Medical & Mental Health Center
 Kings,Wyckoff Heights Medical Center
 Wyoming,Wyoming County Community Hospital
+Capital Region,Albany
+Capital Region,Columbia
+Capital Region,Schenectady
+Capital Region,Warren
+Capital Region,Rensselaer
+Capital Region,Saratoga
+Central New York,Cayuga
+Central New York,Onondaga
+Central New York,Cortland
+Central New York,Madison
+Central New York,Oswego
+Finger Lakes,Ontario
+Finger Lakes,Monroe
+Finger Lakes,Wayne
+Finger Lakes,Livingston
+Finger Lakes,Wyoming
+Long Island,Suffolk
+Long Island,Nassau
+Mid-Hudson,Sullivan
+Mid-Hudson,Rockland
+Mid-Hudson,Westchester
+Mid-Hudson,Ulster
+Mid-Hudson,Orange
+Mid-Hudson,Putnam
+Mohawk Valley,Oneida
+Mohawk Valley,Otsego
+Mohawk Valley,Fulton
+Mohawk Valley,Montgomery
+New York City,New York
+New York City,Bronx
+New York City,Kings
+New York City,Queens
+New York City,Richmond
+North Country,Franklin
+North Country,Jefferson
+North Country,Clinton
+North Country,Lewis
+Southern Tier,Chemung
+Southern Tier,Tompkins
+Southern Tier,Chenango
+Southern Tier,Steuben
+Southern Tier,Broome
+Western New York,Chautauqua
+Western New York,Allegany
+Western New York,Cattaraugus
