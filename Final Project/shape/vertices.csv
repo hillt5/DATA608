@@ -1,142 +1,142 @@
-vertices, size
-Adirondack Medical Center-Saranac Lake Site
-Albany
-Albany Medical Center Hospital
-Alice Hyde Medical Center
-Arnot Ogden Medical Center
-Auburn Memorial Hospital
-Bellevue Hospital Center
-Beth Israel Medical Center/Petrie Campus
-Bronx
-Bronx-Lebanon Hospital Center - Concourse Division
-Brookdale Hospital Medical Center
-Brooklyn Hospital Center - Downtown Campus
-Brooks Memorial Hospital
-Broome
-Capital Region
-Carthage Area Hospital Inc
-Catskill Regional Medical Center
-Cayuga Medical Center at Ithaca
-Central New York
-Champlain Valley Physicians Hospital Medical Center
-Chautauqua
-Chenango Memorial Hospital Inc
-Columbia Memorial Hospital
-Community-General Hospital of Greater Syracuse
-Coney Island Hospital
-Corning Hospital
-Cortland Regional Medical Center Inc
-Crouse Hospital
-Ellis Hospital - Bellevue Woman's Care Center Division
-Elmhurst Hospital Center
-F F Thompson Hospital
-Faxton-St Lukes Healthcare St Lukes Division
-Finger Lakes
-Flushing Hospital Medical Center
-Forest Hills Hospital
-Franklin
-Geneva General Hospital
-Glens Falls Hospital
-Good Samaritan Hospital Medical Center
-Good Samaritan Hospital of Suffern
-Harlem Hospital Center
-Highland Hospital
-Hudson Valley Hospital Center
-Huntington Hospital
-Jacobi Medical Center
-Jamaica Hospital Medical Center
-Jefferson
-Kings
-Kings County Hospital Center
-Kingston Hospital
-Lawrence Hospital Center
-Lenox Hill Hospital
-Lewis County General Hospital
-Lincoln Medical & Mental Health Center
-Long Island
-Long Island Jewish Medical Center
-Lutheran Medical Center
-Maimonides Medical Center
-Mary Imogene Bassett Hospital
-Memorial Hosp of Wm F & Gertrude F Jones A/K/A Jones Memorial Hosp
-Mercy Medical Center
-Metropolitan Hospital Center
-Mid-Hudson
-Mohawk Valley
-Monroe
-Montefiore Med Center - Jack D Weiler Hosp of A Einstein College Div
-Montefiore Medical Center - North Division
-Mount Sinai Hospital
-Nassau
-Nassau University Medical Center
-Nathan Littauer Hospital
-New York
-New York City
-New York Downtown Hospital
-New York Hospital Medical Center   of Queens
-New York Methodist Hospital
-New York Presbyterian Hospital - Allen Pavilion
-New York Presbyterian Hospital - Columbia Presbyterian Center
-New York Presbyterian Hospital - New York Weill Cornell Center
-Newark-Wayne Community Hospital
-Nicholas H Noyes Memorial Hospital
-North Central Bronx Hospital
-North Country
-North Shore University Hospital
-Northern Westchester Hospital
-Nyack Hospital
-NYU Hospitals Center
-Olean General Hospital
-Oneida
-Oneida Healthcare Center
-Onondaga
-Ontario
-Orange
-Orange Regional Medical Center-Goshen Campus
-Oswego Hospital
-Our Lady of Lourdes Memorial Hospital Inc
-Peconic Bay Medical Center
-Phelps Memorial Hospital Assn
-Putnam Hospital Center
-Queens
-Queens Hospital Center
-Richmond
-Richmond University Medical Center
-Rochester General Hospital
-Rockland
-"Rome Memorial Hospital, Inc"
-Samaritan Hospital
-Samaritan Medical Center
-Saratoga Hospital
-SJRH - St Johns Division
-Sound Shore Medical Center of Westchester
-South Nassau Communities Hospital
-Southampton Hospital
-Southern Tier
-Southside Hospital
-St Anthony Community Hospital
-St Barnabas Hospital
-St Catherine of Siena Hospital
-St Charles Hospital
-St Johns Episcopal Hospital So Shore
-St Josephs Hospital Health Center
-St Luke's Cornwall Hospital/Newburgh
-St Lukes Roosevelt Hospital Center - Roosevelt Hospital Division
-St Marys Hospital at Amsterdam
-St Peters Hospital
-Staten Island University Hosp-North
-Strong Memorial Hospital
-Suffolk
-The Unity Hospital of Rochester
-United Health Services Hospitals Inc. - Wilson Medical Center
-University Hospital
-University Hospital of Brooklyn
-Westchester
-Westchester Medical Center
-Western New York
-White Plains Hospital Center
-Winthrop-University Hospital
-Woman's Christian Association
-Woodhull Medical & Mental Health Center
-Wyckoff Heights Medical Center
-Wyoming County Community Hospital
+vertices,size
+Adirondack Medical Center-Saranac Lake Site,169.3333333
+Albany Medical Center Hospital,2144.666667
+Alice Hyde Medical Center,289.6666667
+Arnot Ogden Medical Center,1468
+Auburn Memorial Hospital,814.6666667
+Bellevue Hospital Center,1620.666667
+Beth Israel Medical Center/Petrie Campus,3935.166667
+Bronx-Lebanon Hospital Center - Concourse Division,2380.333333
+Brookdale Hospital Medical Center,1430.666667
+Brooklyn Hospital Center - Downtown Campus,2340.5
+Brooks Memorial Hospital,628.1666667
+Carthage Area Hospital Inc,393.8333333
+Catskill Regional Medical Center,638.6666667
+Cayuga Medical Center at Ithaca,858.6666667
+Champlain Valley Physicians Hospital Medical Center,908.3333333
+Chenango Memorial Hospital Inc,289.6666667
+Columbia Memorial Hospital,458.3333333
+Community-General Hospital of Greater Syracuse,989.8333333
+Coney Island Hospital,1112.666667
+Corning Hospital,408
+Cortland Regional Medical Center Inc,481.8333333
+Crouse Hospital,4027
+Ellis Hospital - Bellevue Woman's Care Center Division,2557.166667
+Elmhurst Hospital Center,3517.833333
+F F Thompson Hospital,629.5
+Faxton-St Lukes Healthcare St Lukes Division,2084.166667
+Flushing Hospital Medical Center,2765
+Forest Hills Hospital,2222.5
+Geneva General Hospital,415.6666667
+Glens Falls Hospital,1362
+Good Samaritan Hospital Medical Center,2794.333333
+Good Samaritan Hospital of Suffern,2911.333333
+Harlem Hospital Center,1064
+Highland Hospital,3052.333333
+Hudson Valley Hospital Center,834.6666667
+Huntington Hospital,1459.5
+Jacobi Medical Center,2243.666667
+Jamaica Hospital Medical Center,2483
+Kings County Hospital Center,2499.666667
+Kingston Hospital,471.8333333
+Lawrence Hospital Center,1657.5
+Lenox Hill Hospital,4102.5
+Lewis County General Hospital,305
+Lincoln Medical & Mental Health Center,2345.666667
+Long Island Jewish Medical Center,5863.666667
+Lutheran Medical Center,4133.166667
+Maimonides Medical Center,8152
+Mary Imogene Bassett Hospital,821
+Memorial Hosp of Wm F & Gertrude F Jones A/K/A Jones Memorial Hosp,311.6666667
+Mercy Medical Center,1179.333333
+Metropolitan Hospital Center,1299.833333
+Montefiore Med Center - Jack D Weiler Hosp of A Einstein College Div,4204.666667
+Montefiore Medical Center - North Division,2570.833333
+Mount Sinai Hospital,6633.333333
+Nassau University Medical Center,1649.666667
+Nathan Littauer Hospital,386.1666667
+New York Downtown Hospital,2464.5
+New York Hospital Medical Center   of Queens,4240.833333
+New York Methodist Hospital,5518
+New York Presbyterian Hospital - Allen Pavilion,2188.333333
+New York Presbyterian Hospital - Columbia Presbyterian Center,4549.333333
+New York Presbyterian Hospital - New York Weill Cornell Center,5750.166667
+Newark-Wayne Community Hospital,508.3333333
+Nicholas H Noyes Memorial Hospital,284.6666667
+North Central Bronx Hospital,1258.5
+North Shore University Hospital,6241.333333
+Northern Westchester Hospital,1636.666667
+Nyack Hospital,1752.166667
+NYU Hospitals Center,4708.833333
+Olean General Hospital,776.1666667
+Oneida Healthcare Center,521.1666667
+Orange Regional Medical Center-Goshen Campus,614.8333333
+Oswego Hospital,640.8333333
+Our Lady of Lourdes Memorial Hospital Inc,1175.166667
+Peconic Bay Medical Center,402.8333333
+Phelps Memorial Hospital Assn,1067.5
+Putnam Hospital Center,417
+Queens Hospital Center,1908.666667
+Richmond University Medical Center,2989.833333
+Rochester General Hospital,2406
+"Rome Memorial Hospital, Inc",597.8333333
+Samaritan Hospital,862.6666667
+Samaritan Medical Center,1655.833333
+Saratoga Hospital,763.3333333
+SJRH - St Johns Division,1542
+Sound Shore Medical Center of Westchester,1144.166667
+South Nassau Communities Hospital,1762.333333
+Southampton Hospital,724.6666667
+Southside Hospital,2480.666667
+St Anthony Community Hospital,486.1666667
+St Barnabas Hospital,1170.5
+St Catherine of Siena Hospital,1154.5
+St Charles Hospital,1692.333333
+St Johns Episcopal Hospital So Shore,800.8333333
+St Josephs Hospital Health Center,1977.5
+St Luke's Cornwall Hospital/Newburgh,1031
+St Lukes Roosevelt Hospital Center - Roosevelt Hospital Division,6389.833333
+St Marys Hospital at Amsterdam,491.8333333
+St Peters Hospital,2641
+Staten Island University Hosp-North,2977.5
+Strong Memorial Hospital,3030.666667
+The Unity Hospital of Rochester,1443.333333
+United Health Services Hospitals Inc. - Wilson Medical Center,1586
+University Hospital,3822.833333
+University Hospital of Brooklyn,1555
+Westchester Medical Center,882.6666667
+White Plains Hospital Center,1853
+Winthrop-University Hospital,4628.166667
+Woman's Christian Association,640.6666667
+Woodhull Medical & Mental Health Center,2048.5
+Wyckoff Heights Medical Center,1459.5
+Wyoming County Community Hospital,235.5
+New York,0
+Kings,0
+Queens,0
+Suffolk,0
+Westchester,0
+Bronx,0
+Nassau,0
+Monroe,0
+Onondaga,0
+Orange,0
+Albany,0
+Broome,0
+Chautauqua,0
+Franklin,0
+Jefferson,0
+Oneida,0
+Ontario,0
+Richmond,0
+Rockland,0
+Capital Region,0
+Central New York,0
+Finger Lakes,0
+Long Island,0
+Mid-Hudson,0
+Mohawk Valley,0
+New York City,0
+North Country,0
+Southern Tier,0
+Western New York,0
