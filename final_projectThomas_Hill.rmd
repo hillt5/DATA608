@@ -611,7 +611,7 @@ bd_births_0914 %>%
   geom_smooth(se = FALSE, method = 'lm') +
   labs(title= 'Birth Rate versus Birth Defect rate, 2009 - 2014 in New York State', x = 'Births per 1,000 population', y = 'Birth Defects per 1,000 Population')
 
-bd_
+
  
 ```
 
@@ -624,6 +624,13 @@ bd_county <- bd_fix %>%
   group_by(Geography) %>%
   summarize(county_defects = sum(total_defects)) %>%
   arrange(desc(Geography))
+
+bd_total_births <- bd_fix  %>%
+  filter(DataYears %in% c('2009-2011', '2012-2014')) %>%
+  group_by(Geography) %>%
+  summarize(county_births = sum(TotalLiveBirths)) %>%
+  arrange(desc(Geography))
+
 
 county_totals <- pregnancy_fix %>%
   filter(Measure.Name == 'Total Births') %>% #useful dataframe with annual birth totals for each region
@@ -656,7 +663,7 @@ county_pop_0914 <- county_pop %>%
   summarize(pop_0914 =  sum(county_population)/6) %>% #average population of each region over 2009 - 2014  
   arrange((Geography))
 
-county_bd_births_0914 <- cbind(bd_births_county, county_pop_0914[,2]) %>%
+county_bd_births_0914 <- cbind(bd_births_county, county_pop_0914[,2], bd_total_births[,2]) %>%
   mutate(defects_per_capita = 1000*county_defects/pop_0914/6) %>% #per 1000 population, divided by 6 for annualized
   mutate(births_per_capita = 1000*births_0914/pop_0914/6) #per 1000 population, divided by 6 for annualized
 
@@ -667,7 +674,11 @@ county_bd_births_0914 %>%
   geom_point(aes(size = pop_0914), show.legend = FALSE) +
   labs(title = 'Birth Defects for Each NY State County, 2009-2014', x = 'Births per 1,000 population', y = 'All Birth Defects, per 1,000 population') 
 
-
+county_bd_births_0914 %>%
+  select(births_0914, county_births)
+county_births_0914
+sum(county_bd_births_0914$births_0914)
+sum(county_bd_births_0914$county_births)
 ```
 
 ### Hospitals, Perinatal Centers, and Birth Defects
@@ -769,7 +780,7 @@ leaflet(nycounties) %>%
   addProviderTiles(providers$CartoDB.DarkMatter) %>%
   addLegend(pal = factpal, values = ~choropleth_counties$map_color, title = 'NY Birth Rate versus Birth Dfects, 2009 - 2014')
 
-
+bd_df
 
 ```
 
