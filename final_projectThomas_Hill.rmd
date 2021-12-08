@@ -2,8 +2,10 @@
 title: "Final Project for DATA 608"
 author: "by Thomas Hill"
 output:
+  html_document:
+    df_print: paged
   html_notebook: default
-  html_document: default
+  theme: material
 ---
 
 ```{r, library}
@@ -750,7 +752,7 @@ leaflet(nycounties) %>%
 
 ```
 
-```{r, hospital-locations}
+```{r, choropleth-map}
 
 
 factpal <- colorFactor('seqseq1', domain = choropleth_counties$map_color)
