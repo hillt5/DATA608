@@ -34,14 +34,13 @@ pregnancy_fix_9 <- pregnancy_df %>%
   filter(Hospital.County %in% c('Broome', 'Chemung', 'Chenango', 'Delaware', 'Schuyler', 'Steuben', 'Tioga', 'Tompkins')) %>%
   mutate(Region = 'Southern Tier')
 pregnancy_fix_10 <- pregnancy_df %>%
-  filter(Hospital.County %in% c('Allegany', 'Cattaraugus', 'Chautauqua', 'Niagra')) %>%
+  filter(Hospital.County %in% c('Allegany', 'Cattaraugus', 'Erie', 'Chautauqua', 'Niagra')) %>%
   mutate(Region = 'Western New York')
 pregnancy_fix <- rbind(pregnancy_fix_1, pregnancy_fix_2, pregnancy_fix_3, pregnancy_fix_4, pregnancy_fix_5, pregnancy_fix_6, pregnancy_fix_7, pregnancy_fix_8, pregnancy_fix_9, pregnancy_fix_10)
 
-
 ui <- navbarPage(title = 'Maternity Information and Child Birth Services, New York State Counties 2008 - 2017',
                  #landing page
-                 navbarMenu('Before you choose your hospital, consider this'),
+                 navbarMenu('Before you choose your hospital, compare your hospital those nearby'),
                  #page 1: Find health indicators for nearby hospitals for most recent year (2017)
                  tabPanel(title = 'Hospital childbirth practices in your area',
                           wellPanel(
@@ -52,7 +51,7 @@ ui <- navbarPage(title = 'Maternity Information and Child Birth Services, New Yo
                    
                    # select indicator
                             selectInput("indicatorInput1", "Select an Indicator to Compare:",
-                                        unique(pregnancy_fix$Measure.Name))
+                                        unique(pregnancy_fix$Measure.Name[pregnancy_fix$Measure.Name != 'Total Births']))
                  ),
                  mainPanel(
                    plotOutput('indicator_plot')
@@ -71,7 +70,7 @@ ui <- navbarPage(title = 'Maternity Information and Child Birth Services, New Yo
                    
                    # select indicator
                             selectInput("indicatorInput2", "Select an Indicator to Compare:",
-                                        unique(pregnancy_fix$Measure.Name))
+                                        unique(pregnancy_fix$Measure.Name[pregnancy_fix$Measure.Name != 'Total Births']))
                  ),
                  mainPanel(
                    plotOutput('compare_plot')
@@ -79,15 +78,13 @@ ui <- navbarPage(title = 'Maternity Information and Child Birth Services, New Yo
                  )
 )
 
-
-
-
 server <- function(input, output) {
   
   output$indicator_plot <- renderPlot({
     
     #filters
-    output_df <- pregnancy_fix%>%
+    output_df <- pregnancy_fix %>%
+      filter(Measure.Name != 'Total Births') %>%
       filter(Region == pregnancy_fix$Region[pregnancy_fix$Hospital.Name == input$hospitalInput1][1], #this selects the region of the input hospital
              Measure.Name == input$indicatorInput1,
              Year == 2017) %>%
@@ -110,7 +107,7 @@ server <- function(input, output) {
   output$compare_plot <- renderPlot({
     
     #filters
-    output_df <- pregnancy_fix_fix%>%
+    output_df <- pregnancy_fix%>%
       filter(Hospital.Name == input$hospitalInput2,
              Measure.Name == input$indicatorInput2,
              Year >= input$yearInput2[1] & Year <= input$yearInput2[2]) %>%
