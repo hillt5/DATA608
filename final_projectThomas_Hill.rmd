@@ -195,7 +195,7 @@ ny_pop_08_17 %>%
   ylim(c(18000000,21000000))
 ```
 
-It appears that total population growth has also decreased during this period, with state population supposedly reaching its maximum in 2015. Next, lets use these estimates to get the per capital birth rate.
+It appears that total population growth has also decreased during this period, with state population supposedly reaching its maximum in 2015. Next, let's use these estimates to get the per capital birth rate.
 
 ```{r, ny-pop-region}
 ## recoding the population data using the same method as used in the first dataframe
@@ -397,7 +397,7 @@ Once again, New York City is the clear outlier when it comes to perinatal center
 
 Next, let's consider the capacity of each of these hospitals: are regional centers also delivering more babies, or are the hospital beds reserved for only for the cases that demand it?
 
-To proceed, there's one issue I'll have to address with the perinatal center data, which is that some of the hospitals in our initial dataset are not listed as birthing centers. I'll identify these centers, see if they are significant contributors to the number of births, and then join the two 
+To proceed, there's one issue I'll have to address with the perinatal center data, which is that some of the hospitals in our initial dataset are not listed as birthing centers. I'll identify these centers, see if they are significant contributors to the number of births, and then join the two.
 
 ```{r, missing-centers}
 bc_id <- ny_bc_fix %>%
@@ -628,7 +628,7 @@ After plotting the available hospitals, there are some notable outliers that cou
 ## Maps
 
 
-Finally, lets visualize hospitals and births relative to the geography of New York State.
+Finally, let's visualize hospitals and births relative to the geography of New York State.
 
 
 
