@@ -31,7 +31,7 @@ library(RColorBrewer)
 
 Pregnancy and childbirth are a critical period for both mother and child. Currently, the most common place of birth remains at a healthcare facility, whether at a birth center or labor and delivery department within a hospital. To help expectant patients and their families make informed decisions about pre-booking a delivery, the state of New York mandates that each facility of a certain size must provide annual aggregate statistics to better inform the decision.
 
-The provided statistics at a minimum must include several maternity-related procedures, including rate of cesarean sections versus vaginal deliveries, breech births delivered vaginally, and deliveries by midwives, as well as elements of medical care such as deliveries using forceps and rates of analgesia/anesthesia, episiotomies, and induction/augmentation of labor. The NY Department of Health adds the caveat that these statistics do not inform about a specific healthcare practitioner’s preferences, but are useful in playing an active part in planning for childbirth.
+The provided statistics at a minimum must include several maternity-related procedures, including rate of Cesarean sections versus vaginal deliveries, breech births delivered vaginally, and deliveries by midwives, as well as elements of medical care such as deliveries using forceps and rates of analgesia/anesthesia, episiotomies, and induction/augmentation of labor. The NY Department of Health adds the caveat that these statistics do not inform about a specific healthcare practitioner’s preferences, but are useful in playing an active part in planning for childbirth.
 
 
 ```{r, csv}
@@ -293,7 +293,7 @@ midwives_wide %>%
 
 Over time, it appears the majority of regions stayed relatively constant. The clearest exception is Western New York whose percent nearly doubled over a 10 year period. It's also notable that there's a lot of variability between regions, with Long Island and NYC having little representation of midwives, and the more rural areas showing higher representation.  This may be related to the suggestion in the previous section that OB/GYN's prefer to practice in urban areas, while midwives are addressing practitioner shortages elsewhere. 
 
-### Cesarian Births
+### Cesarean Births
 
 Another piece of conventional wisdom to examine is the rise of Cesarean births or so-called C-sections. C-sections are the alternative to vaginal deliveries and are performed by accessing the uterus through an incision in the mother's uterus, while under general or local anesthesia. There are a variety of reasons why C-sections would be necessary depending on the orientation of the child or obstruction in the birth canal, multiple pregnancies to be delivered, or emergency situations. C-sections are also done upon request, with the trade-off of shorter induction period versus longer recovery period.
 
@@ -315,7 +315,7 @@ cs_wide %>%
   geom_line() +
   geom_point() +
   ylim(c(27,42)) +
-  labs(title = 'Percent of Births via Cesarian Delivery, 2008 - 2017', y = '% of Births') +
+  labs(title = 'Percent of Births via Cesarean Delivery, 2008 - 2017', y = '% of Births') +
   scale_x_continuous(breaks = c(2008,2010,2012,2014,2016,2018))
 ```
 
